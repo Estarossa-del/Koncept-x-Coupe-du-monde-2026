@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KONCEPT · Pronostics CDM 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05080F;--bg2:#0A1220;--bg3:#14203A;
+  --red:#E8192C;--gold:#D4AF37;--gold2:#F5D060;
+  --blue:#1E90FF;--green:#00C853;--white:#F2F4FF;--muted:#6A7D9C;
+  --festive1:#FF6B2B;--festive2:#00D4AA;
+  --chapter-size:clamp(80px,12vw,160px);
+}
+html{scroll-behavior:smooth}
+
+/* Film grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:180px;
+}
+
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cpath d='M8 2 Q8 16 14 18 Q20 16 20 2Z' fill='%23D4AF37'/%3E%3Cpath d='M8 5Q3 5 3 10Q3 15 8 13' fill='none' stroke='%23D4AF37' stroke-width='1.8' stroke-linecap='round'/%3E%3Cpath d='M20 5Q25 5 25 10Q25 15 20 13' fill='none' stroke='%23D4AF37' stroke-width='1.8' stroke-linecap='round'/%3E%3Crect x='12' y='18' width='4' height='6' fill='%23D4AF37'/%3E%3Crect x='8' y='24' width='12' height='3' fill='%23D4AF37' rx='1.5'/%3E%3C/svg%3E") 14 4,auto}
+
+h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
+
+/* ANRcade-style section header */
+.section-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:0.28em;
+  color:var(--gold);font-weight:700;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-label::before{content:'';display:inline-block;width:32px;height:1px;background:var(--gold);opacity:0.6;}
+
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(38px,6.5vw,80px);
+  line-height:0.93;margin-bottom:48px;
+  letter-spacing:0.02em;
+}
+
+/* Chapter number decorator */
+.chapter-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:var(--chapter-size);
+  line-height:1;
+  color:rgba(212,175,55,0.06);
+  position:absolute;top:-20px;right:0;
+  pointer-events:none;user-select:none;
+  letter-spacing:-0.03em;
+}
+
+.max-w{max-width:1240px;margin:0 auto}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gold);opacity:0.4;border-radius:2px}
+
+/* Section reveal animation */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Horizontal divider */
+.section-rule{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.25),transparent);
+  margin:0;
+}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(6,16,30,0.92);backdrop-filter:blur(22px);
+  border-bottom:1px solid rgba(212,175,55,0.15);
+  padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--gold);letter-spacing:0.1em;white-space:nowrap}
+.nav-links{display:flex;gap:20px;align-items:center}
+.nav-link{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;white-space:nowrap}
+.nav-link:hover,.nav-link.active{color:var(--white)}
+.nav-cta{background:var(--red);color:#fff;padding:6px 15px;border-radius:6px;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;letter-spacing:0.07em;white-space:nowrap}
+.nav-cta:hover{background:#c41422;transform:translateY(-1px);box-shadow:0 5px 18px rgba(232,25,44,0.35)}
+.nav-burger{display:none;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
+
+/* BUTTONS */
+.btn-primary{background:var(--red);color:#fff;padding:13px 34px;border-radius:8px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;letter-spacing:0.1em;text-transform:uppercase}
+.btn-primary:hover{background:#c41422;transform:translateY(-2px);box-shadow:0 10px 28px rgba(232,25,44,0.4)}
+.btn-outline{background:transparent;color:var(--white);padding:13px 26px;border-radius:8px;font-size:14px;font-weight:600;border:1px solid rgba(255,255,255,0.2);cursor:pointer;transition:all 0.2s;margin-left:12px}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-demo{background:rgba(232,25,44,0.12);color:var(--red);padding:13px 24px;border-radius:8px;font-size:14px;font-weight:600;border:1px solid rgba(232,25,44,0.3);cursor:pointer;transition:all 0.2s}
+.btn-demo:hover{background:rgba(232,25,44,0.2)}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:100px 24px 80px;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% -10%,rgba(212,175,55,0.13) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 92% 80%,rgba(30,144,255,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 40% at 8% 80%,rgba(232,25,44,0.08) 0%,transparent 50%),
+    var(--bg)
+}
+/* Hero side lines — ANRcade detail */
+.hero::before,.hero::after{
+  content:'';position:absolute;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(212,175,55,0.15) 30%,rgba(212,175,55,0.15) 70%,transparent);
+  pointer-events:none;
+}
+.hero::before{left:clamp(16px,4vw,60px)}
+.hero::after{right:clamp(16px,4vw,60px)}
+
+.hero-content{text-align:center;animation:fadeUp 1s ease both;z-index:2}
+.hero-tagline{
+  font-size:10px;text-transform:uppercase;letter-spacing:0.35em;
+  color:var(--gold);margin-bottom:14px;font-weight:700;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.hero-tagline::before,.hero-tagline::after{content:'';display:inline-block;width:20px;height:1px;background:var(--gold);opacity:0.5}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(56px,10vw,130px);
+  line-height:0.85;
+  background:linear-gradient(160deg,var(--white) 0%,var(--gold2) 45%,var(--festive1) 100%);
+  background-size:200% 200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 6s ease infinite;
+  text-wrap:balance;
+}
+.hero-sub{font-size:15px;color:var(--muted);margin:20px auto 28px;max-width:500px;line-height:1.7}
+.hero-mascots{font-size:clamp(28px,5vw,44px);margin:8px 0 20px;letter-spacing:10px}
+.hero-dates{font-size:12px;color:var(--muted);margin-top:20px;letter-spacing:0.1em}
+.hero-dates span{color:var(--gold);font-weight:700}
+.stars{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite;animation-delay:var(--delay)}
+
+/* SIGNUP FORM */
+.signup-form input,.signup-form select{width:100%;padding:11px 14px;background:var(--bg3);
+  border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:var(--white);
+  font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:12px;transition:border-color 0.2s}
+.signup-form input:focus,.signup-form select:focus{border-color:var(--gold)}
+.signup-form label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em}
+
+/* TWEAKS */
+.tweaks-panel{position:fixed;bottom:24px;right:24px;background:var(--bg2);
+  border:1px solid rgba(212,175,55,0.3);border-radius:16px;padding:20px;width:260px;
+  z-index:1000;display:none;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:slideUp 0.3s ease}
+.tweaks-panel.open{display:block}
+.tweaks-panel h4{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);margin-bottom:16px}
+.tweak-row{margin-bottom:14px}
+.tweak-row label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em}
+.tweak-btns{display:flex;gap:6px}
+.tweak-btn{flex:1;padding:7px 4px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+.tweak-btn.on{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold)}
+
+/* FOOTER */
+.footer{background:var(--bg2);border-top:1px solid rgba(212,175,55,0.12);padding:64px 24px;text-align:center;position:relative;overflow:hidden}
+.footer::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--gold);margin-bottom:10px;letter-spacing:0.1em}
+
+/* MASCOTS FOOTER */
+.mascots-footer{
+  background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+  border-top:1px solid rgba(212,175,55,0.1);
+  padding:80px 24px;text-align:center;
+}
+.mascots-row{display:flex;justify-content:center;gap:clamp(24px,6vw,80px);align-items:flex-end;flex-wrap:wrap;margin-top:40px}
+.mascot-card{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:default}
+.mascot-emoji-wrap{
+  width:100px;height:100px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:58px;
+  animation:mascotBounce 2.5s ease-in-out infinite;
+  background:radial-gradient(circle,rgba(212,175,55,0.1),transparent 70%);
+  transition:all 0.3s;
+}
+.mascot-card:hover .mascot-emoji-wrap{
+  background:radial-gradient(circle,rgba(212,175,55,0.25),transparent 70%);
+  transform:scale(1.1);
+}
+.mascot-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:0.08em}
+.mascot-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em}
+
+/* ANRcade card style */
+.anr-card{
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+  transition:all 0.3s ease;
+  position:relative;overflow:hidden;
+}
+.anr-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(212,175,55,0.04) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+  pointer-events:none;
+}
+.anr-card:hover{border-color:rgba(212,175,55,0.3);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.anr-card:hover::before{opacity:1}
+
+/* KEYFRAMES */
+@keyframes orbitCW{to{transform:rotate(360deg)}}
+@keyframes orbitCCW{to{transform:rotate(-360deg)}}
+@keyframes flagCW{from{transform:translateX(var(--r)) rotate(0deg)}to{transform:translateX(var(--r)) rotate(-360deg)}}
+@keyframes flagCCW{from{transform:translateX(var(--r)) rotate(0deg)}to{transform:translateX(var(--r)) rotate(360deg)}}
+@keyframes trophyPulse{0%,100%{box-shadow:0 0 40px rgba(212,175,55,0.6),0 0 80px rgba(212,175,55,0.2)}50%{box-shadow:0 0 70px rgba(212,175,55,0.9),0 0 130px rgba(212,175,55,0.4)}}
+@keyframes pulse{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1)}50%{opacity:.95;transform:translate(-50%,-50%) scale(1.18)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.65}}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mascotBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes goalAnim{0%{opacity:0;transform:translate(-50%,-50%) scale(0.4)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2)}}
+@keyframes shakeScreen{0%,100%{transform:none}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@keyframes fadeOutOverlay{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+@keyframes santabReveal{0%{opacity:0;filter:blur(8px)}100%{opacity:1;filter:blur(0)}}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;top:58px;left:0;right:0;background:rgba(5,8,15,0.98);padding:20px;gap:16px;border-bottom:1px solid rgba(212,175,55,0.15);z-index:99}
+  .nav-burger{display:block}
+  .btn-outline{display:none}
+  .chapter-num{font-size:80px}
+}
+@media(max-width:600px){
+  .hero-title{font-size:54px}
+  .hero-mascots{font-size:28px}
+  .section-title{font-size:40px}
+}
+</style>
+
+<script>
+/* ─── GLOBAL DATA ─────────────────────────────────────────────────────────── */
+window.getFlagUrl=function(c){if(!c)return'';var x=c.toLowerCase();if(x==='gb-eng')return'https://flagcdn.com/w40/gb-eng.png';if(x==='gb-sct')return'https://flagcdn.com/w40/gb-sct.png';return'https://flagcdn.com/w40/'+x+'.png';};
+
+window.TEAMS=[
+  {name:'Mexique',nameEn:'Mexico',nameEs:'México',code:'MX',group:'A',host:true},
+  {name:'Corée du Sud',nameEn:'South Korea',nameEs:'Corea del Sur',code:'KR',group:'A'},
+  {name:'Afrique du Sud',nameEn:'South Africa',nameEs:'Sudáfrica',code:'ZA',group:'A'},
+  {name:'Tchéquie',nameEn:'Czech Republic',nameEs:'Rep. Checa',code:'CZ',group:'A'},
+  {name:'Canada',nameEn:'Canada',nameEs:'Canadá',code:'CA',group:'B',host:true},
+  {name:'Suisse',nameEn:'Switzerland',nameEs:'Suiza',code:'CH',group:'B'},
+  {name:'Qatar',nameEn:'Qatar',nameEs:'Catar',code:'QA',group:'B'},
+  {name:'Bosnie',nameEn:'Bosnia',nameEs:'Bosnia',code:'BA',group:'B'},
+  {name:'Brésil',nameEn:'Brazil',nameEs:'Brasil',code:'BR',group:'C'},
+  {name:'Maroc',nameEn:'Morocco',nameEs:'Marruecos',code:'MA',group:'C'},
+  {name:'Écosse',nameEn:'Scotland',nameEs:'Escocia',code:'GB-SCT',group:'C'},
+  {name:'Haïti',nameEn:'Haiti',nameEs:'Haití',code:'HT',group:'C'},
+  {name:'États-Unis',nameEn:'USA',nameEs:'EE.UU.',code:'US',group:'D',host:true},
+  {name:'Turquie',nameEn:'Turkey',nameEs:'Turquía',code:'TR',group:'D'},
+  {name:'Australie',nameEn:'Australia',nameEs:'Australia',code:'AU',group:'D'},
+  {name:'Paraguay',nameEn:'Paraguay',nameEs:'Paraguay',code:'PY',group:'D'},
+  {name:'Allemagne',nameEn:'Germany',nameEs:'Alemania',code:'DE',group:'E'},
+  {name:'Colombie',nameEn:'Colombia',nameEs:'Colombia',code:'CO',group:'E'},
+  {name:'Curaçao',nameEn:'Curaçao',nameEs:'Curazao',code:'CW',group:'E',debut:true},
+  {name:'Nouvelle-Zélande',nameEn:'New Zealand',nameEs:'Nueva Zelanda',code:'NZ',group:'E'},
+  {name:'Pays-Bas',nameEn:'Netherlands',nameEs:'Países Bajos',code:'NL',group:'F'},
+  {name:'Japon',nameEn:'Japan',nameEs:'Japón',code:'JP',group:'F'},
+  {name:'Sénégal',nameEn:'Senegal',nameEs:'Senegal',code:'SN',group:'F'},
+  {name:'Suède',nameEn:'Sweden',nameEs:'Suecia',code:'SE',group:'F'},
+  {name:'Belgique',nameEn:'Belgium',nameEs:'Bélgica',code:'BE',group:'G'},
+  {name:'Uruguay',nameEn:'Uruguay',nameEs:'Uruguay',code:'UY',group:'G'},
+  {name:'Algérie',nameEn:'Algeria',nameEs:'Argelia',code:'DZ',group:'G'},
+  {name:'Cap-Vert',nameEn:'Cape Verde',nameEs:'Cabo Verde',code:'CV',group:'G',debut:true},
+  {name:'Angleterre',nameEn:'England',nameEs:'Inglaterra',code:'GB-ENG',group:'H'},
+  {name:'Norvège',nameEn:'Norway',nameEs:'Noruega',code:'NO',group:'H'},
+  {name:'Égypte',nameEn:'Egypt',nameEs:'Egipto',code:'EG',group:'H'},
+  {name:'Panama',nameEn:'Panama',nameEs:'Panamá',code:'PA',group:'H'},
+  {name:'Espagne',nameEn:'Spain',nameEs:'España',code:'ES',group:'I'},
+  {name:'Arabie saoudite',nameEn:'Saudi Arabia',nameEs:'Arabia Saudita',code:'SA',group:'I'},
+  {name:'Tunisie',nameEn:'Tunisia',nameEs:'Túnez',code:'TN',group:'I'},
+  {name:'Irak',nameEn:'Iraq',nameEs:'Irak',code:'IQ',group:'I'},
+  {name:'France',nameEn:'France',nameEs:'Francia',code:'FR',group:'J'},
+  {name:'Croatie',nameEn:'Croatia',nameEs:'Croacia',code:'HR',group:'J'},
+  {name:'Ouzbékistan',nameEn:'Uzbekistan',nameEs:'Uzbekistán',code:'UZ',group:'J',debut:true},
+  {name:'Ghana',nameEn:'Ghana',nameEs:'Ghana',code:'GH',group:'J'},
+  {name:'Argentine',nameEn:'Argentina',nameEs:'Argentina',code:'AR',group:'K'},
+  {name:'Iran',nameEn:'Iran',nameEs:'Irán',code:'IR',group:'K'},
+  {name:"Côte d'Ivoire",nameEn:'Ivory Coast',nameEs:'Costa de Marfil',code:'CI',group:'K'},
+  {name:'RD Congo',nameEn:'DR Congo',nameEs:'R.D. Congo',code:'CD',group:'K'},
+  {name:'Portugal',nameEn:'Portugal',nameEs:'Portugal',code:'PT',group:'L'},
+  {name:'Équateur',nameEn:'Ecuador',nameEs:'Ecuador',code:'EC',group:'L'},
+  {name:'Autriche',nameEn:'Austria',nameEs:'Austria',code:'AT',group:'L'},
+  {name:'Jordanie',nameEn:'Jordan',nameEs:'Jordania',code:'JO',group:'L',debut:true},
+];
+
+window.GRADES=[
+  {id:'papier', nameFr:'Ballon Papier', nameEn:'Paper Ball',   nameEs:'Balón Papel',    min:0,  max:39,  col1:'#9aa0ad',col2:'#c5cad4',level:'Novice'},
+  {id:'pierre', nameFr:'Ballon Pierre', nameEn:'Stone Ball',   nameEs:'Balón Piedra',   min:40, max:69,  col1:'#6b6b6b',col2:'#9e9e9e',level:'Apprenti'},
+  {id:'mousse', nameFr:'Ballon Mousse', nameEn:'Foam Ball',    nameEs:'Balón Espuma',   min:70, max:99,  col1:'#4a8c2a',col2:'#7ec843',level:'Confirmé'},
+  {id:'cuir',   nameFr:'Ballon Cuir',   nameEn:'Leather Ball', nameEs:'Balón Cuero',    min:100,max:139, col1:'#7a4015',col2:'#b86328',level:'Expert'},
+  {id:'or',     nameFr:'Ballon Or',     nameEn:'Golden Ball',  nameEs:'Balón Dorado',   min:140,max:189, col1:'#c8860a',col2:'#ffd060',level:'Maître'},
+  {id:'diamant',nameFr:'Ballon Diamant',nameEn:'Diamond Ball', nameEs:'Balón Diamante', min:190,max:235, col1:'#5db8dc',col2:'#c0e8ff',level:'Légende'},
+];
+window.getGrade=function(pts){return window.GRADES.find(function(g){return pts<=g.max;})||window.GRADES[window.GRADES.length-1];};
+
+window.INIT_LB=[
+  {id:1,name:'Alexandre D.',pts:142,bonus:15},{id:2,name:'Sarah M.',pts:128,bonus:13},
+  {id:3,name:'Kevin B.',pts:115,bonus:10},{id:4,name:'Inès T.',pts:98,bonus:8},
+  {id:5,name:'Mehdi R.',pts:87,bonus:5},{id:6,name:'Clara V.',pts:72,bonus:3},
+  {id:7,name:'Thomas N.',pts:54,bonus:0},{id:8,name:'Lucie P.',pts:31,bonus:0},
+];
+
+/* SANTAB ratings */
+var SR={AR:92,FR:91,BR:90,ES:89,DE:87,PT:86,NL:85,BE:84,'GB-ENG':83,NO:79,HR:82,
+  MX:78,US:77,CA:76,MA:80,JP:79,KR:76,SN:75,UY:81,CO:78,CH:80,TR:77,AU:72,
+  EG:71,DZ:73,IR:70,CI:74,GH:69,TN:68,SA:67,EC:72,AT:75,SE:76,PY:69,PA:65,
+  QA:64,IQ:63,ZA:68,BA:70,CZ:73,CW:58,NZ:62,CV:60,UZ:61,JO:59,HT:56,CD:62,'GB-SCT':73};
+function santabPredict(cA,cB){var a=SR[cA]||65,b=SR[cB]||65,d=a-b;if(d>8)return'1';if(d<-8)return'2';return'N';}
+
+window.MATCHES=[
+  {id:'A1',phase:'Groupe A',date:'11 Juin',teamA:{name:'Mexique',code:'MX'},teamB:{name:'Corée du Sud',code:'KR'},pts:1},
+  {id:'B1',phase:'Groupe B',date:'12 Juin',teamA:{name:'Canada',code:'CA'},teamB:{name:'Suisse',code:'CH'},pts:1},
+  {id:'C1',phase:'Groupe C',date:'12 Juin',teamA:{name:'Brésil',code:'BR'},teamB:{name:'Maroc',code:'MA'},pts:1},
+  {id:'D1',phase:'Groupe D',date:'13 Juin',teamA:{name:'États-Unis',code:'US'},teamB:{name:'Turquie',code:'TR'},pts:1},
+  {id:'E1',phase:'Groupe E',date:'13 Juin',teamA:{name:'Allemagne',code:'DE'},teamB:{name:'Colombie',code:'CO'},pts:1},
+  {id:'F1',phase:'Groupe F',date:'14 Juin',teamA:{name:'Pays-Bas',code:'NL'},teamB:{name:'Japon',code:'JP'},pts:1},
+  {id:'G1',phase:'Groupe G',date:'14 Juin',teamA:{name:'Belgique',code:'BE'},teamB:{name:'Uruguay',code:'UY'},pts:1},
+  {id:'H1',phase:'Groupe H',date:'15 Juin',teamA:{name:'Angleterre',code:'GB-ENG'},teamB:{name:'Norvège',code:'NO'},pts:1},
+  {id:'I1',phase:'Groupe I',date:'15 Juin',teamA:{name:'Espagne',code:'ES'},teamB:{name:'Arabie saoudite',code:'SA'},pts:1},
+  {id:'J1',phase:'Groupe J',date:'16 Juin',teamA:{name:'France',code:'FR'},teamB:{name:'Croatie',code:'HR'},pts:1},
+  {id:'K1',phase:'Groupe K',date:'16 Juin',teamA:{name:'Argentine',code:'AR'},teamB:{name:'Iran',code:'IR'},pts:1},
+  {id:'L1',phase:'Groupe L',date:'17 Juin',teamA:{name:'Portugal',code:'PT'},teamB:{name:'Équateur',code:'EC'},pts:1},
+];
+
+/* Pre-compute SANTAB predictions */
+window.SANTAB_PRED={};
+window.MATCHES.forEach(function(m){window.SANTAB_PRED[m.id]=santabPredict(m.teamA.code,m.teamB.code);});
+
+/* SCHEDULE — full group stage (3 matchdays × 12 groups × 2 matches/day = ~48 featured) */
+(function(){
+  var groups={
+    A:[['MX','KR'],['ZA','CZ'],['MX','CZ'],['KR','ZA'],['MX','ZA'],['KR','CZ']],
+    B:[['CA','CH'],['QA','BA'],['CA','BA'],['CH','QA'],['CA','QA'],['CH','BA']],
+    C:[['BR','MA'],['GB-SCT','HT'],['BR','HT'],['MA','GB-SCT'],['BR','GB-SCT'],['MA','HT']],
+    D:[['US','TR'],['AU','PY'],['US','PY'],['TR','AU'],['US','AU'],['TR','PY']],
+    E:[['DE','CO'],['CW','NZ'],['DE','NZ'],['CO','CW'],['DE','CW'],['CO','NZ']],
+    F:[['NL','JP'],['SN','SE'],['NL','SE'],['JP','SN'],['NL','SN'],['JP','SE']],
+    G:[['BE','UY'],['DZ','CV'],['BE','CV'],['UY','DZ'],['BE','DZ'],['UY','CV']],
+    H:[['GB-ENG','NO'],['EG','PA'],['GB-ENG','PA'],['NO','EG'],['GB-ENG','EG'],['NO','PA']],
+    I:[['ES','SA'],['TN','IQ'],['ES','IQ'],['SA','TN'],['ES','TN'],['SA','IQ']],
+    J:[['FR','HR'],['UZ','GH'],['FR','GH'],['HR','UZ'],['FR','UZ'],['HR','GH']],
+    K:[['AR','IR'],['CI','CD'],['AR','CD'],['IR','CI'],['AR','CI'],['IR','CD']],
+    L:[['PT','EC'],['AT','JO'],['PT','JO'],['EC','AT'],['PT','AT'],['EC','JO']],
+  };
+  var teamMap={};
+  window.TEAMS.forEach(function(t){teamMap[t.code]=t;});
+  var schedule=[];
+  var startDate=new Date('2026-06-11T18:00:00Z');
+  var gKeys=Object.keys(groups);
+  gKeys.forEach(function(g,gi){
+    groups[g].forEach(function(pair,mi){
+      var d=new Date(startDate.getTime()+(gi*14400000)+(mi*86400000));
+      var cA=pair[0],cB=pair[1];
+      var tA=teamMap[cA]||{name:cA,code:cA};
+      var tB=teamMap[cB]||{name:cB,code:cB};
+      schedule.push({
+        id:g+'_'+mi,group:g,
+        kickoff:d.toISOString(),
+        teamA:{name:tA.name,code:cA},
+        teamB:{name:tB.name,code:cB},
+        matchday:mi<2?1:mi<4?2:3,
+      });
+    });
+  });
+  window.SCHEDULE=schedule;
+})();
+
+window.POLLS=[
+  {id:'p1',fr:'Qui sera Champion du Monde 2026 ?',en:'Who will win the 2026 World Cup?',es:'¿Quién ganará el Mundial 2026?',options:[
+    {fr:'🇫🇷 France',en:'France',es:'Francia',pct:24,color:'#003189'},
+    {fr:'🇧🇷 Brésil',en:'Brazil',es:'Brasil',pct:22,color:'#009c3b'},
+    {fr:'🇦🇷 Argentine',en:'Argentina',es:'Argentina',pct:18,color:'#74ACDF'},
+    {fr:'🇪🇸 Espagne',en:'Spain',es:'España',pct:16,color:'#AA151B'},
+    {fr:'Autre',en:'Other',es:'Otro',pct:20,color:'#667085'},
+  ]},
+  {id:'p2',fr:'Meilleur buteur du tournoi ?',en:'Top scorer?',es:'¿Máximo goleador?',options:[
+    {fr:'Haaland',en:'Haaland',es:'Haaland',pct:27,color:'#0082ff'},
+    {fr:'Mbappé',en:'Mbappé',es:'Mbappé',pct:23,color:'#0055A4'},
+    {fr:'Vinicius Jr',en:'Vinicius Jr',es:'Vinicius Jr',pct:19,color:'#009c3b'},
+    {fr:'Messi',en:'Messi',es:'Messi',pct:15,color:'#74ACDF'},
+    {fr:'Autre',en:'Other',es:'Otro',pct:16,color:'#667085'},
+  ]},
+  {id:'p3',fr:'La grande surprise ?',en:'The big surprise?',es:'¿La gran sorpresa?',options:[
+    {fr:'🇲🇦 Maroc',en:'Morocco',es:'Marruecos',pct:28,color:'#C1272D'},
+    {fr:'🇺🇸 USA',en:'USA',es:'EE.UU.',pct:21,color:'#3C3B6E'},
+    {fr:'🇯🇵 Japon',en:'Japan',es:'Japón',pct:19,color:'#BC002D'},
+    {fr:'🇹🇷 Turquie',en:'Turkey',es:'Turquía',pct:16,color:'#E30A17'},
+    {fr:'Autre',en:'Other',es:'Otro',pct:16,color:'#667085'},
+  ]},
+  {id:'p4',fr:'Stade le plus emblématique ?',en:'Most iconic stadium?',es:'¿Estadio más emblemático?',options:[
+    {fr:'Azteca (MEX)',en:'Azteca (MEX)',es:'Azteca (MEX)',pct:34,color:'#007a4d'},
+    {fr:'MetLife (USA)',en:'MetLife (USA)',es:'MetLife (USA)',pct:28,color:'#3C3B6E'},
+    {fr:'SoFi (USA)',en:'SoFi (USA)',es:'SoFi (USA)',pct:22,color:'#c41a22'},
+    {fr:'BC Place (CAN)',en:'BC Place (CAN)',es:'BC Place (CAN)',pct:16,color:'#FF0000'},
+  ]},
+];
+
+window.PLAYERS=[
+  {rank:1,code:'NO',name:'Erling Haaland',country:'Norvège',pos:'Attaquant',desc:'Machine à buts, recordman Premier League.'},
+  {rank:2,code:'FR',name:'Kylian Mbappé',country:'France',pos:'Ailier',desc:'Vitesse et sang-froid, numéro 10 des Bleus.'},
+  {rank:3,code:'BR',name:'Vinicius Jr',country:'Brésil',pos:'Ailier',desc:"Dribbleur explosif, Ballon d'Or 2024."},
+  {rank:4,code:'AR',name:'Lionel Messi',country:'Argentine',pos:'Meneur',desc:'Champion du monde 2022, une dernière danse.'},
+  {rank:5,code:'PT',name:'Cristiano Ronaldo',country:'Portugal',pos:'Attaquant',desc:'800 buts en carrière, toujours affamé.'},
+  {rank:6,code:'GB-ENG',name:'Jude Bellingham',country:'Angleterre',pos:'Milieu',desc:'Polyvalent et décisif, avenir du football.'},
+  {rank:7,code:'ES',name:'Rodri',country:'Espagne',pos:'Milieu déf.',desc:"Ballon d'Or 2023, métronome de l'Espagne."},
+  {rank:8,code:'ES',name:'Lamine Yamal',country:'Espagne',pos:'Ailier',desc:'Prodige barcelonais, 18 ans au top mondial.'},
+  {rank:9,code:'DE',name:'Florian Wirtz',country:'Allemagne',pos:'Milieu off.',desc:"Numéro 10 technique, créateur d'espaces."},
+  {rank:10,code:'DE',name:'Jamal Musiala',country:'Allemagne',pos:'Milieu',desc:'Dribbleur élégant, espoir du Bayern Munich.'},
+  {rank:11,code:'GB-ENG',name:'Phil Foden',country:'Angleterre',pos:'Milieu',desc:'Génie de Man City, capable de tout.'},
+  {rank:12,code:'GB-ENG',name:'Bukayo Saka',country:'Angleterre',pos:'Ailier',desc:'Régularité exemplaire, top ailier mondial.'},
+  {rank:13,code:'ES',name:'Pedri',country:'Espagne',pos:'Milieu',desc:'Vision de jeu, héritier de Xavi au Barça.'},
+  {rank:14,code:'AR',name:'Julián Álvarez',country:'Argentine',pos:'Attaquant',desc:"Travailleur infatigable, doublure de Messi."},
+  {rank:15,code:'BR',name:'Raphinha',country:'Brésil',pos:'Ailier',desc:'Capitaine du Barça, leader offensif brésilien.'},
+];
+
+window.I18N={
+  fr:{
+    signup:'INSCRIVEZ-VOUS',signupFull:'INSCRIVEZ-VOUS GRATUITEMENT',
+    nav_pred:'Pronostics',nav_rank:'Classement',nav_tv:'Programme',
+    nav_polls:'Sondages',nav_players:'TOP 15',nav_community:'Communauté',nav_team:'Mon Équipe',
+    hero_koncept:'KONCEPT présente',
+    hero_sub:'48 nations · 104 matchs · Pronostique, bats SANTAB et remporte le Ballon Diamant 💎',
+    sec_groups_label:'Phase de groupes · 11 Juin – 19 Juillet 2026',sec_groups_title:'12 GROUPES · 48 NATIONS',
+    sec_groups_sub:'Cliquez sur un groupe pour développer · Hôtes marqués HOST',
+    sec_rank_label:'Classement général · SANTAB inclus',sec_rank_title:'CLASSEMENT',
+    sec_rank_sub:'Max : 235 pts · Groupes : 1pt · 1/16 : 3pts · 1/8 : 5pts · QF : 7pts · SF : 10pts · Finale : 15pts',
+    sec_pred_label:'Sélectionnez votre pronostic · 1 / N / 2',sec_pred_title:'PRONOSTICS',
+    pred_save:'VALIDER MES PRONOSTICS',
+    sec_polls_label:'Votre avis compte',sec_polls_title:'SONDAGES',
+    polls_hint:'👆 Votez pour voir les résultats',polls_done:'✓ Vote enregistré',
+    sec_players_label:'Les stars attendues au tournoi',sec_players_title:'TOP 15 JOUEURS MONDIAUX',
+    sec_team_label:'Votre sélection préférée',sec_team_title:'CHOISISSEZ VOTRE ÉQUIPE',
+    sec_tv_label:'Tous les matchs · Chaînes TV mondiales',sec_tv_title:'PROGRAMME & TV',
+    tv_region:'Votre région',
+    sec_mascots_label:'Les gardiens du tournoi',sec_mascots_title:'LES 3 MASCOTTES OFFICIELLES',
+    your_team:'Votre équipe',group:'Groupe',jours:'jours',heures:'heures',min:'min',sec:'sec',
+    host:'HÔTE',debut:'DÉBUT',
+  },
+  en:{
+    signup:'SIGN UP',signupFull:'SIGN UP FOR FREE',
+    nav_pred:'Predictions',nav_rank:'Standings',nav_tv:'Schedule',
+    nav_polls:'Polls',nav_players:'TOP 15',nav_community:'Community',nav_team:'My Team',
+    hero_koncept:'KONCEPT presents',
+    hero_sub:'48 nations · 104 matches · Predict, beat SANTAB and win the Diamond Ball 💎',
+    sec_groups_label:'Group stage · Jun 11 – Jul 19, 2026',sec_groups_title:'12 GROUPS · 48 NATIONS',
+    sec_groups_sub:'Click a group to expand · Host nations marked HOST',
+    sec_rank_label:'Live standings · SANTAB included',sec_rank_title:'STANDINGS',
+    sec_rank_sub:'Max: 235 pts · Groups: 1pt · R16: 3pts · R8: 5pts · QF: 7pts · SF: 10pts · Final: 15pts',
+    sec_pred_label:'Pick your prediction · 1 / N / 2',sec_pred_title:'PREDICTIONS',
+    pred_save:'SAVE PREDICTIONS',
+    sec_polls_label:'Your opinion counts',sec_polls_title:'POLLS',
+    polls_hint:'👆 Vote to see results',polls_done:'✓ Vote recorded',
+    sec_players_label:'Stars expected at the tournament',sec_players_title:'TOP 15 WORLD PLAYERS',
+    sec_team_label:'Your favorite squad',sec_team_title:'CHOOSE YOUR TEAM',
+    sec_tv_label:'All matches · World TV channels',sec_tv_title:'SCHEDULE & TV',
+    tv_region:'Your region',
+    sec_mascots_label:'The tournament guardians',sec_mascots_title:'THE 3 OFFICIAL MASCOTS',
+    your_team:'Your team',group:'Group',jours:'days',heures:'hours',min:'min',sec:'sec',
+    host:'HOST',debut:'DEBUT',
+  },
+  es:{
+    signup:'INSCRÍBETE',signupFull:'INSCRÍBETE GRATIS',
+    nav_pred:'Pronósticos',nav_rank:'Clasificación',nav_tv:'Programa',
+    nav_polls:'Encuestas',nav_players:'TOP 15',nav_community:'Comunidad',nav_team:'Mi Equipo',
+    hero_koncept:'KONCEPT presenta',
+    hero_sub:'48 naciones · 104 partidos · Predice, vence a SANTAB y gana el Balón Diamante 💎',
+    sec_groups_label:'Fase de grupos · 11 Jun – 19 Jul 2026',sec_groups_title:'12 GRUPOS · 48 NACIONES',
+    sec_groups_sub:'Clic en un grupo para ver · Anfitriones marcados SEDE',
+    sec_rank_label:'Clasificación en vivo · SANTAB incluido',sec_rank_title:'CLASIFICACIÓN',
+    sec_rank_sub:'Máx: 235 pts · Grupos: 1pt · 1/16: 3pts · 1/8: 5pts · CF: 7pts · SF: 10pts · Final: 15pts',
+    sec_pred_label:'Elige tu pronóstico · 1 / N / 2',sec_pred_title:'PRONÓSTICOS',
+    pred_save:'GUARDAR PRONÓSTICOS',
+    sec_polls_label:'Tu opinión importa',sec_polls_title:'ENCUESTAS',
+    polls_hint:'👆 Vota para ver resultados',polls_done:'✓ Voto registrado',
+    sec_players_label:'Las estrellas esperadas',sec_players_title:'TOP 15 JUGADORES',
+    sec_team_label:'Tu selección favorita',sec_team_title:'ELIGE TU EQUIPO',
+    sec_tv_label:'Todos los partidos · Canales TV mundiales',sec_tv_title:'PROGRAMA & TV',
+    tv_region:'Tu región',
+    sec_mascots_label:'Los guardianes del torneo',sec_mascots_title:'LAS 3 MASCOTAS OFICIALES',
+    your_team:'Tu equipo',group:'Grupo',jours:'días',heures:'horas',min:'min',sec:'seg',
+    host:'SEDE',debut:'DEBUT',
+  },
+};
+</script>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- components.jsx inlined -->
+<script type="text/babel">
+
+// ─── LANG CONTEXT ─────────────────────────────────────────────────────────────
+window.LangContext = window.LangContext || React.createContext('fr');
+const useLang = () => {
+  const lang = React.useContext(window.LangContext);
+  const t = key => { const d=window.I18N||{}; return ((d[lang]||d.fr)||{})[key]||key; };
+  return { lang, t };
+};
+
+// ─── NAV ──────────────────────────────────────────────────────────────────────
+const Nav = ({ active, onNav, onSignup, lang, setLang }) => {
+  const { t } = useLang();
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const links = [
+    { id:'pronostics', k:'nav_pred'     },
+    { id:'classement', k:'nav_rank'     },
+    { id:'programme',  k:'nav_tv'       },
+    { id:'sondages',   k:'nav_polls'    },
+    { id:'joueurs',    k:'nav_players'  },
+    { id:'communaute', k:'nav_community'},
+    { id:'monequipe',  k:'nav_team'     },
+  ];
+  return (
+    <nav className="nav">
+      <div className="nav-logo" onClick={() => onNav('hero')} style={{cursor:'pointer'}}>
+        KONCEPT <span style={{color:'var(--red)'}}>×</span> CDM 2026
+      </div>
+      <div className={`nav-links${menuOpen?' open':''}`}>
+        {links.map(l => (
+          <a key={l.id} className={`nav-link${active===l.id?' active':''}`}
+            onClick={() => { onNav(l.id); setMenuOpen(false); }}>{t(l.k)}</a>
+        ))}
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+        <div style={{display:'flex',gap:2,background:'rgba(255,255,255,0.08)',borderRadius:6,padding:2}}>
+          {['fr','en','es'].map(l => (
+            <button key={l} onClick={() => setLang(l)} style={{
+              padding:'3px 7px',borderRadius:4,border:'none',fontSize:11,fontWeight:700,
+              letterSpacing:'0.05em',cursor:'pointer',transition:'all 0.2s',
+              background:lang===l?'var(--gold)':'transparent',
+              color:lang===l?'#000':'var(--muted)',
+            }}>{l.toUpperCase()}</button>
+          ))}
+        </div>
+        <button className="nav-cta" onClick={onSignup}>{t('signup')}</button>
+        <button className="nav-burger" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
+      </div>
+    </nav>
+  );
+};
+
+// ─── SANTAB AVATAR ────────────────────────────────────────────────────────────
+const SantabAvatar = ({ size=48, animated=true }) => (
+  <svg width={size} height={size} viewBox="0 0 60 65" style={{flexShrink:0}}>
+    {/* Antenna */}
+    <line x1="30" y1="12" x2="30" y2="4" stroke="#D4AF37" strokeWidth="2.5" strokeLinecap="round"/>
+    <circle cx="30" cy="3" r="3.5" fill="#E8192C">
+      {animated && <animate attributeName="opacity" values="1;0.15;1" dur="1.1s" repeatCount="indefinite"/>}
+    </circle>
+    {/* Head */}
+    <rect x="8" y="12" width="44" height="38" rx="8" fill="#0D1525" stroke="#D4AF37" strokeWidth="2"/>
+    <rect x="8" y="12" width="44" height="14" rx="8" fill="#D4AF37" opacity="0.18"/>
+    {/* Eyes */}
+    <rect x="14" y="22" width="12" height="10" rx="3" fill="#D4AF37" opacity="0.9">
+      {animated && <animate attributeName="scaleY" values="1;0.05;1" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.5 0 0.5 1;0.5 0 0.5 1"/>}
+    </rect>
+    <rect x="34" y="22" width="12" height="10" rx="3" fill="#D4AF37" opacity="0.9">
+      {animated && <animate attributeName="scaleY" values="1;0.05;1" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.5 0 0.5 1;0.5 0 0.5 1" begin="0.1s"/>}
+    </rect>
+    {/* Eye pupils */}
+    <circle cx="20" cy="27" r="2.5" fill="#0D1525"/>
+    <circle cx="40" cy="27" r="2.5" fill="#0D1525"/>
+    {/* Mouth */}
+    <rect x="16" y="38" width="28" height="5" rx="2.5" fill="#D4AF37" opacity="0.5"/>
+    <rect x="19" y="39.5" width="5" height="2" rx="1" fill="#D4AF37"/>
+    <rect x="27" y="39.5" width="5" height="2" rx="1" fill="#D4AF37"/>
+    <rect x="35" y="39.5" width="5" height="2" rx="1" fill="#D4AF37"/>
+    {/* Neck */}
+    <rect x="24" y="50" width="12" height="8" rx="3" fill="#0D1525" stroke="#D4AF37" strokeWidth="1.5"/>
+    {/* Code lines */}
+    {animated && [0,1,2].map(i => (
+      <line key={i} x1="11" y1={16+i*2} x2={11+Math.random()*20+8} y2={16+i*2}
+        stroke="#D4AF37" strokeWidth="0.8" opacity="0.3">
+        <animate attributeName="x2" values={`${20+i*5};${28+i*3};${20+i*5}`} dur={`${1.5+i*0.3}s`} repeatCount="indefinite"/>
+      </line>
+    ))}
+  </svg>
+);
+
+// ─── ATOM HERO ────────────────────────────────────────────────────────────────
+const AtomHero = () => {
+  const rings = React.useMemo(() => {
+    const all = window.TEAMS || [];
+    return [
+      { r:154, dur:36, dir: 1, teams:all.slice(0,12)  },
+      { r:250, dur:60, dir:-1, teams:all.slice(12,28) },
+      { r:346, dur:88, dir: 1, teams:all.slice(28,48) },
+    ];
+  }, []);
+
+  return (
+    <div style={{position:'relative',width:754,height:754,maxWidth:'92vw',maxHeight:'92vw',flexShrink:0}}>
+      {/* Glow bg */}
+      <div style={{position:'absolute',inset:0,borderRadius:'50%',background:'radial-gradient(circle,rgba(212,175,55,0.12) 0%,transparent 65%)',pointerEvents:'none'}}/>
+      {rings.map((ring,ri) => (
+        <div key={ri} style={{
+          position:'absolute',top:'50%',left:'50%',
+          width:ring.r*2,height:ring.r*2,
+          marginLeft:-ring.r,marginTop:-ring.r,
+          borderRadius:'50%',
+          border:`1px solid rgba(212,175,55,${0.3-ri*0.08})`,
+          pointerEvents:'none',
+        }}/>
+      ))}
+      {/* Central glow pulse */}
+      <div style={{
+        position:'absolute',top:'50%',left:'50%',
+        width:200,height:200,marginLeft:-100,marginTop:-100,
+        borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(212,175,55,0.35) 0%,transparent 70%)',
+        animation:'pulse 3s ease-in-out infinite',pointerEvents:'none',
+      }}/>
+      {/* Trophy */}
+      <div style={{
+        position:'absolute',top:'50%',left:'50%',
+        transform:'translate(-50%,-50%)',
+        width:215,height:215,borderRadius:'50%',overflow:'hidden',
+        boxShadow:'0 0 60px rgba(212,175,55,0.75),0 0 120px rgba(212,175,55,0.3)',
+        border:'3px solid rgba(212,175,55,0.75)',
+        animation:'trophyPulse 3.5s ease-in-out infinite',zIndex:10,
+      }}>
+        <img
+          src={window.__resources&&window.__resources.trophyImg||'uploads/Coupe du monde 26.jpg'}
+          alt="Coupe du Monde 2026"
+          style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 10%'}}
+          onError={e=>{e.target.style.display='none';e.target.parentNode.innerHTML='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:72px;">🏆</div>';}}
+        />
+      </div>
+      {/* Orbiting flags */}
+      {rings.map((ring,ri) =>
+        ring.teams.map((team,ti) => {
+          const n=ring.teams.length;
+          const startDeg=(ti/n)*360;
+          const delay=-(startDeg/360)*ring.dur;
+          const fw=ri===0?30:ri===1?26:22;
+          const fh=Math.round(fw*0.67);
+          return (
+            <div key={`${ri}-${ti}`} title={team.name} style={{
+              position:'absolute',top:'50%',left:'50%',width:0,height:0,
+              animationName:ring.dir>0?'orbitCW':'orbitCCW',
+              animationDuration:`${ring.dur}s`,
+              animationTimingFunction:'linear',
+              animationIterationCount:'infinite',
+              animationDelay:`${delay}s`,
+            }}>
+              <div style={{
+                position:'absolute',
+                animationName:ring.dir>0?'flagCCW':'flagCW',
+                animationDuration:`${ring.dur}s`,
+                animationTimingFunction:'linear',
+                animationIterationCount:'infinite',
+                animationDelay:`${delay}s`,
+                '--r':`${ring.r}px`,
+                marginTop:-fh/2,
+              }}>
+                <img src={window.getFlagUrl&&window.getFlagUrl(team.code)||''} alt={team.name}
+                  width={fw} height={fh}
+                  style={{display:'block',objectFit:'cover',borderRadius:2,
+                    boxShadow:'0 1px 5px rgba(0,0,0,0.8)',
+                    border:'1px solid rgba(255,255,255,0.2)',
+                  }}/>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+};
+
+// ─── MASCOT IDLE ─────────────────────────────────────────────────────────────
+const MascotIdle = ({ emoji, name, color, delay='0s' }) => (
+  <div title={name} style={{
+    display:'flex',flexDirection:'column',alignItems:'center',gap:4,
+    animation:`mascotBounce 2.5s ease-in-out ${delay} infinite`,
+    cursor:'default',
+  }}
+  onMouseEnter={e=>e.currentTarget.style.animationPlayState='paused'}
+  onMouseLeave={e=>e.currentTarget.style.animationPlayState='running'}>
+    <div style={{fontSize:'clamp(36px,6vw,52px)',filter:`drop-shadow(0 0 12px ${color}88)`}}>{emoji}</div>
+    <span style={{fontSize:10,fontWeight:700,color,letterSpacing:'0.08em',textTransform:'uppercase'}}>{name}</span>
+  </div>
+);
+
+// ─── COUNTDOWN ────────────────────────────────────────────────────────────────
+const Countdown = () => {
+  const { t } = useLang();
+  const target = new Date('2026-06-11T16:00:00Z');
+  const [diff, setDiff] = React.useState(target - Date.now());
+  React.useEffect(() => {
+    const timer = setInterval(() => setDiff(target - Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const d=Math.max(0,Math.floor(diff/86400000));
+  const h=Math.max(0,Math.floor((diff%86400000)/3600000));
+  const m=Math.max(0,Math.floor((diff%3600000)/60000));
+  const s=Math.max(0,Math.floor((diff%60000)/1000));
+  const units=[[d,t('jours')],[h,t('heures')],[m,t('min')],[s,t('sec')]];
+  return (
+    <div style={{display:'flex',gap:16,justifyContent:'center',margin:'16px 0 28px'}}>
+      {units.map(([v,l],i) => (
+        <div key={i} style={{textAlign:'center',minWidth:52}}>
+          <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(30px,5vw,48px)',color:'var(--gold)',lineHeight:1}}>
+            {String(v).padStart(2,'0')}
+          </div>
+          <div style={{fontSize:10,textTransform:'uppercase',letterSpacing:'0.1em',color:'var(--muted)',marginTop:2}}>{l}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ─── BALL ICON ────────────────────────────────────────────────────────────────
+const BallIcon = ({ grade, size=36 }) => {
+  const r=size/2;
+  const p={
+    papier: {bg:'#b0b6c0',shine:'#d8dde5',seam:'#8a9099'},
+    pierre: {bg:'#6b6b6b',shine:'#a0a0a0',seam:'#444'},
+    mousse: {bg:'#4e9a28',shine:'#82cc50',seam:'#2d6010'},
+    cuir:   {bg:'#8b4513',shine:'#c4722a',seam:'#5c2d0a'},
+    or:     {bg:'#c8860a',shine:'#ffd060',seam:'#8a5800'},
+    diamant:{bg:'#4aa8d8',shine:'#c0eaff',seam:'#1a6890'},
+  }[grade.id]||{bg:'#888',shine:'#bbb',seam:'#555'};
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{flexShrink:0}}>
+      <defs>
+        <radialGradient id={`bg-${grade.id}-${size}`} cx="35%" cy="35%">
+          <stop offset="0%" stopColor={p.shine}/>
+          <stop offset="100%" stopColor={p.bg}/>
+        </radialGradient>
+      </defs>
+      <circle cx={r} cy={r} r={r-1} fill={`url(#bg-${grade.id}-${size})`}/>
+      <path d={`M${r} ${r*0.35} L${r*1.35} ${r*0.62} L${r*1.22} ${r*1.05} L${r*0.78} ${r*1.05} L${r*0.65} ${r*0.62} Z`}
+        fill="none" stroke={p.seam} strokeWidth="0.9" opacity="0.55"/>
+      <path d={`M${r} ${r*0.35} L${r*1.35} ${r*0.62}`} fill="none" stroke={p.seam} strokeWidth="0.9" opacity="0.38"/>
+      <path d={`M${r*1.35} ${r*0.62} L${r*1.5} ${r*1.1}`} fill="none" stroke={p.seam} strokeWidth="0.9" opacity="0.38"/>
+      <path d={`M${r*0.65} ${r*0.62} L${r*0.5} ${r*1.1}`} fill="none" stroke={p.seam} strokeWidth="0.9" opacity="0.38"/>
+      <ellipse cx={r*0.72} cy={r*0.65} rx={r*0.18} ry={r*0.12} fill="white"
+        opacity={grade.id==='diamant'?0.55:0.22} transform={`rotate(-30,${r*0.72},${r*0.65})`}/>
+    </svg>
+  );
+};
+
+const GradeBadge = ({ pts }) => {
+  const g = (window.getGrade||function(){return window.GRADES[0];})(pts);
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:6}}>
+      <BallIcon grade={g} size={28}/>
+      <span style={{fontSize:11,fontWeight:600,color:g.col2,whiteSpace:'nowrap'}}>{g.nameFr}</span>
+    </div>
+  );
+};
+
+// ─── WIN/LOSS ANIMATION (canvas confetti) ─────────────────────────────────────
+const WinAnimation = ({ onDone }) => {
+  const canvasRef = React.useRef(null);
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const COLORS = ['#D4AF37','#E8192C','#00B347','#009EDB','#ffffff','#FFD060'];
+    const particles = Array.from({length:120},() => ({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height*0.4 - canvas.height*0.2,
+      vx:(Math.random()-0.5)*5,
+      vy:Math.random()*5+2,
+      color:COLORS[Math.floor(Math.random()*COLORS.length)],
+      size:Math.random()*9+4,
+      rot:Math.random()*360,
+      rotV:(Math.random()-0.5)*8,
+      alpha:1,
+    }));
+    let frame;
+    const start=Date.now();
+    const draw=() => {
+      const elapsed=Date.now()-start;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p => {
+        p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV; p.vy+=0.12;
+        p.alpha=Math.max(0,1-elapsed/2800);
+        ctx.save();
+        ctx.globalAlpha=p.alpha;
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.rot*Math.PI/180);
+        ctx.fillStyle=p.color;
+        ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);
+        ctx.restore();
+      });
+      if(elapsed<2800) frame=requestAnimationFrame(draw);
+      else { onDone && onDone(); }
+    };
+    draw();
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:9999,pointerEvents:'none'}}>
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>
+      <div style={{
+        position:'absolute',top:'40%',left:'50%',transform:'translate(-50%,-50%)',
+        fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(52px,10vw,96px)',
+        color:'var(--gold)',textShadow:'0 0 40px rgba(212,175,55,0.8)',
+        animation:'goalAnim 2.8s ease forwards',letterSpacing:'0.06em',whiteSpace:'nowrap',
+      }}>⚽ GOAAAL!</div>
+    </div>
+  );
+};
+
+const LossAnimation = ({ onDone }) => {
+  React.useEffect(() => {
+    const timer = setTimeout(() => onDone&&onDone(), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:9999,pointerEvents:'none',
+      animation:'shakeScreen 0.5s ease 3, fadeOutOverlay 2.5s ease forwards'}}>
+      <div style={{position:'absolute',inset:0,background:'rgba(232,25,44,0.12)'}}/>
+      <div style={{
+        position:'absolute',top:'40%',left:'50%',transform:'translate(-50%,-50%)',
+        fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(48px,9vw,88px)',
+        color:'#E8192C',textShadow:'0 0 30px rgba(232,25,44,0.7)',
+        animation:'fadeOutOverlay 2.5s ease forwards',letterSpacing:'0.06em',whiteSpace:'nowrap',
+      }}>🟥 RATÉ...</div>
+    </div>
+  );
+};
+
+// ─── SECTION WRAPPER (ANRcade chapter style) ─────────────────────────────────
+const Section = ({ id, label, title, children, dark, screenLabel, style: extraStyle, chapterNum }) => {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.classList.add('visible'); obs.disconnect(); }
+    }, { threshold: 0.08 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <section id={id} data-screen-label={screenLabel||id}
+      style={{padding:'100px 24px',background:dark?'var(--bg2)':'var(--bg)',position:'relative',...(extraStyle||{})}}>
+      {/* Horizontal rule top */}
+      <div className="section-rule" style={{position:'absolute',top:0,left:0,right:0}}/>
+      <div className="max-w reveal" ref={ref}>
+        {chapterNum && <span className="chapter-num" aria-hidden="true">{chapterNum}</span>}
+        <p className="section-label">{label}</p>
+        <h2 className="section-title">{title}</h2>
+        {children}
+      </div>
+    </section>
+  );
+};
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+const Modal = ({ open, onClose, title, children }) => {
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.78)',zIndex:200,
+      display:'flex',alignItems:'center',justifyContent:'center',padding:20,backdropFilter:'blur(6px)'}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'var(--bg2)',
+        border:'1px solid rgba(212,175,55,0.4)',borderRadius:18,padding:32,
+        maxWidth:500,width:'100%',boxShadow:'0 30px 80px rgba(0,0,0,0.6)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h3 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:26,color:'var(--gold)'}}>{title}</h3>
+          <button onClick={onClose} style={{background:'transparent',border:'none',color:'var(--muted)',fontSize:22,cursor:'pointer'}}>✕</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window,{Nav,SantabAvatar,AtomHero,MascotIdle,Countdown,BallIcon,GradeBadge,WinAnimation,LossAnimation,Section,Modal,useLang});
+
+</script>
+
+<!-- sections.jsx inlined -->
+<script type="text/babel">
+
+// ─── MASCOTTES ────────────────────────────────────────────────────────────────
+const MascotsSection = () => {
+  const { t } = useLang();
+  const [hov, setHov] = React.useState(null);
+  const mascots = [
+    { id:'moose', emoji:'🫎', name:'Moo-Deng', country:'Canada', code:'CA', color:'#009EDB',
+      trait:'Esprit nordique · Force tranquille',
+      desc:"Représentant du Canada, Moo-Deng incarne la détermination des terres du Nord. Son énergie communicative galvanise les foules.",
+      tags:['🍁 Canada','Élan royal','#NordStrong'] },
+    { id:'jaguar', emoji:'🐆', name:'Pique', country:'Mexique', code:'MX', color:'#00B347',
+      trait:'Passion latine · Agilité légendaire',
+      desc:"Pique est le cœur battant du tournoi. Agile et passionné comme le football mexicain, il électrise chaque stade de sa présence flamboyante.",
+      tags:['🇲🇽 Mexique','Jaguar aztèque','#VivaElFutbol'] },
+    { id:'eagle', emoji:'🦅', name:'Tala', country:'États-Unis', code:'US', color:'#E8192C',
+      trait:'Vision aiguisée · Leadership américain',
+      desc:"Tala plane au-dessus du tournoi avec une vue imprenable. Symbolisant la liberté et l'excellence, il incarne le rêve américain du football.",
+      tags:['🇺🇸 USA','Aigle chauve','#USAStrong'] },
+  ];
+  return (
+    <section id="mascottes" data-screen-label="02 Mascottes" style={{padding:'80px 24px',background:'linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%)'}}>
+      <div className="max-w">
+        <p className="section-label">{t('sec_mascots_label')}</p>
+        <h2 className="section-title">{t('sec_mascots_title')}</h2>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:24}}>
+          {mascots.map(m => {
+            const isH=hov===m.id;
+            return (
+              <div key={m.id}
+                onMouseEnter={()=>setHov(m.id)}
+                onMouseLeave={()=>setHov(null)}
+                style={{background:isH?`${m.color}18`:'rgba(255,255,255,0.03)',
+                  border:`1px solid ${isH?m.color+'66':'rgba(255,255,255,0.07)'}`,
+                  borderRadius:20,padding:32,transition:'all 0.35s ease',
+                  transform:isH?'translateY(-6px)':'none',
+                  boxShadow:isH?`0 20px 60px ${m.color}33`:'none',
+                  position:'relative',overflow:'hidden'}}>
+                <div style={{
+                  fontSize:'clamp(52px,8vw,72px)',lineHeight:1,marginBottom:16,
+                  filter:isH?`drop-shadow(0 0 20px ${m.color}88)`:'none',
+                  transition:'filter 0.35s',
+                  animation:'mascotBounce 2.5s ease-in-out infinite',
+                }}>
+                  {m.emoji}
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                  <img src={window.getFlagUrl(m.code)} width={28} height={18}
+                    style={{borderRadius:3,objectFit:'cover'}} alt=""/>
+                  <span style={{fontFamily:'Bebas Neue,sans-serif',fontSize:28,color:'var(--white)',letterSpacing:'0.05em'}}>{m.name}</span>
+                </div>
+                <div style={{fontSize:12,fontWeight:600,color:m.color,marginBottom:12,letterSpacing:'0.08em'}}>{m.trait}</div>
+                <p style={{fontSize:13,color:'var(--muted)',lineHeight:1.6,marginBottom:16}}>{m.desc}</p>
+                <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                  {m.tags.map((tag,i) => (
+                    <span key={i} style={{fontSize:11,padding:'3px 10px',borderRadius:20,
+                      background:`${m.color}1a`,color:m.color,fontWeight:600}}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ─── GROUPS ───────────────────────────────────────────────────────────────────
+const GroupsSection = ({ myTeam }) => {
+  const { t, lang } = useLang();
+  const [active, setActive] = React.useState(null);
+  const groups = 'ABCDEFGHIJKL'.split('');
+  const byGroup = g => (window.TEAMS||[]).filter(t => t.group===g);
+  const tn = tm => lang==='en'?tm.nameEn:lang==='es'?tm.nameEs:tm.name;
+  return (
+    <Section id="groupes" label={t('sec_groups_label')} title={t('sec_groups_title')} dark screenLabel="09 Groupes" chapterNum="09">
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(185px,1fr))',gap:12}}>
+        {groups.map(g => (
+          <div key={g} onClick={()=>setActive(active===g?null:g)}
+            style={{background:active===g?'var(--bg3)':'rgba(255,255,255,0.03)',
+              border:active===g?'1px solid rgba(212,175,55,0.55)':'1px solid rgba(255,255,255,0.07)',
+              borderRadius:12,padding:14,cursor:'pointer',transition:'all 0.2s'}}>
+            <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:12,color:'var(--gold)',letterSpacing:'0.12em',marginBottom:10}}>
+              GROUPE {g}
+            </div>
+            {byGroup(g).map(team => (
+              <div key={team.code} style={{display:'flex',alignItems:'center',gap:8,padding:'5px 0',borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+                <img src={window.getFlagUrl(team.code)} width={24} height={16}
+                  style={{borderRadius:2,objectFit:'cover',border:'1px solid rgba(255,255,255,0.12)',flexShrink:0}} alt=""/>
+                <span style={{fontSize:12,flex:1,fontWeight:myTeam?.code===team.code?700:400,
+                  color:myTeam?.code===team.code?'var(--gold)':'var(--white)'}}>{tn(team)}</span>
+                {team.host && <span style={{fontSize:9,color:'var(--blue)',fontWeight:700}}>{t('host')}</span>}
+                {team.debut && <span style={{fontSize:9,color:'var(--green)',fontWeight:700}}>{t('debut')}</span>}
+                {myTeam?.code===team.code && <span style={{fontSize:11}}>❤️</span>}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <p style={{marginTop:16,fontSize:12,color:'var(--muted)',textAlign:'center'}}>{t('sec_groups_sub')}</p>
+    </Section>
+  );
+};
+
+// ─── PREDICTIONS 1/N/2 + SANTAB ─────────────────────────────────────────────
+const PredictionsSection = ({ predictions, setPredictions }) => {
+  const { t, lang } = useLang();
+  const [winAnim, setWinAnim] = React.useState(false);
+  const [lossAnim, setLossAnim] = React.useState(false);
+  const [santabRevealed, setSantabRevealed] = React.useState({});
+
+  const MATCHES = window.MATCHES||[];
+  const SANTAB_PRED = window.SANTAB_PRED||{};
+
+  const setPick = (matchId, pick) => {
+    setPredictions(prev => ({...prev, [matchId]: pick}));
+  };
+
+  const ODDS = {
+    A1:{1:'1.85',N:'3.50',2:'4.20'}, B1:{1:'2.10',N:'3.30',2:'3.80'},
+    C1:{1:'1.60',N:'3.80',2:'5.50'}, D1:{1:'1.75',N:'3.50',2:'4.50'},
+    E1:{1:'1.55',N:'3.70',2:'5.80'}, F1:{1:'1.90',N:'3.50',2:'4.00'},
+    G1:{1:'1.80',N:'3.40',2:'4.30'}, H1:{1:'1.65',N:'3.60',2:'5.20'},
+    I1:{1:'1.55',N:'3.60',2:'5.90'}, J1:{1:'1.62',N:'3.55',2:'5.40'},
+    K1:{1:'1.50',N:'3.80',2:'6.50'}, L1:{1:'1.58',N:'3.65',2:'5.60'},
+  };
+
+  const getMatchRevealTime = (matchDate) => {
+    // Simulate countdown: if match is "upcoming" show countdown
+    const now = new Date();
+    const kickoff = new Date('2026-06-15T18:00:00Z'); // placeholder
+    const revealTime = new Date(kickoff.getTime() - 30*60*1000);
+    return now >= revealTime;
+  };
+
+  return (
+    <Section id="pronostics" label={t('sec_pred_label')} title={t('sec_pred_title')} dark screenLabel="03 Pronostics" chapterNum="03">
+      {/* SANTAB banner */}
+      <div style={{
+        background:'linear-gradient(135deg,rgba(212,175,55,0.12),rgba(232,25,44,0.08))',
+        border:'1px solid rgba(212,175,55,0.4)',
+        borderRadius:16,padding:'20px 28px',marginBottom:36,
+        display:'flex',alignItems:'center',gap:20,flexWrap:'wrap',
+      }}>
+        <SantabAvatar size={64} animated={true}/>
+        <div>
+          <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(18px,3.5vw,28px)',
+            color:'var(--gold)',letterSpacing:'0.04em',textShadow:'0 0 20px rgba(212,175,55,0.5)',
+            lineHeight:1.2}}>
+            Défiez SANTAB — Montrez que vous êtes meilleur qu'une IA 🤖
+          </div>
+          <p style={{fontSize:13,color:'var(--muted)',marginTop:6}}>
+            SANTAB analyse les classements FIFA, la forme récente et l'historique. Battez-le match par match !
+          </p>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:16}}>
+        {MATCHES.map(m => {
+          const pick = predictions[m.id];
+          const odds = ODDS[m.id]||{1:'1.90',N:'3.30',2:'4.00'};
+          const sbPred = SANTAB_PRED[m.id]||'1';
+          const revealed = santabRevealed[m.id] || true; // always show for demo
+
+          return (
+            <div key={m.id} style={{
+              background:'rgba(255,255,255,0.03)',
+              border:`1px solid ${pick?'rgba(212,175,55,0.5)':'rgba(255,255,255,0.08)'}`,
+              borderRadius:14,padding:20,transition:'all 0.2s',
+            }}>
+              {/* Match header */}
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:14}}>
+                <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.1em',color:'var(--gold)',textTransform:'uppercase'}}>{m.phase}</span>
+                <span style={{fontSize:11,color:'var(--muted)'}}>📅 {m.date}</span>
+              </div>
+
+              {/* Teams */}
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+                <div style={{textAlign:'center',flex:1}}>
+                  <img src={window.getFlagUrl(m.teamA.code)} width={44} height={30}
+                    style={{borderRadius:4,objectFit:'cover',border:'1px solid rgba(255,255,255,0.15)',marginBottom:6}} alt=""/>
+                  <div style={{fontSize:12,fontWeight:600}}>{m.teamA.name}</div>
+                </div>
+                <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:22,color:'var(--muted)',padding:'0 12px'}}>VS</div>
+                <div style={{textAlign:'center',flex:1}}>
+                  <img src={window.getFlagUrl(m.teamB.code)} width={44} height={30}
+                    style={{borderRadius:4,objectFit:'cover',border:'1px solid rgba(255,255,255,0.15)',marginBottom:6}} alt=""/>
+                  <div style={{fontSize:12,fontWeight:600}}>{m.teamB.name}</div>
+                </div>
+              </div>
+
+              {/* 1 / N / 2 buttons */}
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:14}}>
+                {[
+                  {v:'1', label:'1', sub:m.teamA.name},
+                  {v:'N', label:'N', sub:'Nul'},
+                  {v:'2', label:'2', sub:m.teamB.name},
+                ].map(opt => (
+                  <button key={opt.v} onClick={()=>setPick(m.id,opt.v)}
+                    style={{
+                      padding:'10px 6px',borderRadius:10,border:'none',cursor:'pointer',
+                      transition:'all 0.2s',
+                      background:pick===opt.v
+                        ?'linear-gradient(135deg,var(--gold),#c8860a)'
+                        :'rgba(255,255,255,0.06)',
+                      color:pick===opt.v?'#000':'var(--white)',
+                      transform:pick===opt.v?'scale(1.06)':'scale(1)',
+                      boxShadow:pick===opt.v?'0 4px 20px rgba(212,175,55,0.4)':'none',
+                    }}>
+                    <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:22,lineHeight:1}}>{opt.label}</div>
+                    <div style={{fontSize:10,opacity:0.7,marginTop:2}}>{opt.sub}</div>
+                    <div style={{fontSize:11,fontWeight:700,marginTop:3,
+                      color:pick===opt.v?'#000':'var(--gold)'}}>{odds[opt.v]}</div>
+                  </button>
+                ))}
+              </div>
+
+              {/* SANTAB prediction */}
+              <div style={{
+                display:'flex',alignItems:'center',gap:10,padding:'10px 14px',
+                background:'rgba(212,175,55,0.06)',border:'1px solid rgba(212,175,55,0.2)',
+                borderRadius:10,
+              }}>
+                <SantabAvatar size={28} animated={false}/>
+                <div style={{flex:1,fontSize:12,color:'var(--muted)'}}>
+                  <span style={{fontWeight:700,color:'var(--gold)'}}>SANTAB : </span>
+                  {revealed ? (
+                    <span style={{fontWeight:700,color:'var(--white)',
+                      animation:'santabReveal 0.6s ease'}}>
+                      {sbPred==='1'?`1 — ${m.teamA.name}`:sbPred==='N'?'N — Nul':`2 — ${m.teamB.name}`}
+                    </span>
+                  ) : (
+                    <span style={{color:'var(--muted)'}}>🔒 Dévoile dans <strong>XX:XX</strong></span>
+                  )}
+                </div>
+                {revealed && pick && (
+                  <span style={{fontSize:13,fontWeight:700,
+                    color:pick===sbPred?'var(--red)':'var(--green)'}}>
+                    {pick===sbPred?'=':'≠'}
+                  </span>
+                )}
+              </div>
+
+              {pick && <div style={{textAlign:'center',marginTop:10,fontSize:12,color:'var(--green)',fontWeight:600}}>✓ Pronostic enregistré</div>}
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{textAlign:'center',marginTop:32,display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+        <button className="btn-primary" onClick={()=>{setWinAnim(true);}}>VALIDER MES PRONOSTICS</button>
+        <button className="btn-demo" onClick={()=>setLossAnim(true)}>Tester animation 🟥</button>
+      </div>
+
+      {winAnim && <WinAnimation onDone={()=>setWinAnim(false)}/>}
+      {lossAnim && <LossAnimation onDone={()=>setLossAnim(false)}/>}
+    </Section>
+  );
+};
+
+// ─── LEADERBOARD (with SANTAB) ─────────────────────────────────────────────────
+const LeaderboardSection = ({ leaderboard }) => {
+  const { t } = useLang();
+  const SANTAB_ENTRY = { id:'santab', name:'🤖 SANTAB', pts:156, bonus:20, isSantab:true };
+  const sorted = [...leaderboard, SANTAB_ENTRY].sort((a,b)=>(b.pts+b.bonus)-(a.pts+a.bonus));
+  const rankColors=['#D4AF37','#C0C0C0','#CD7F32'];
+  const rankIcons=['🥇','🥈','🥉'];
+
+  return (
+    <Section id="classement" label={t('sec_rank_label')} title={t('sec_rank_title')} screenLabel="04 Classement" chapterNum="04">
+      <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:32}}>
+        {(window.GRADES||[]).map(g => (
+          <div key={g.id} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 14px',
+            background:`${g.col1}18`,border:`1px solid ${g.col1}44`,borderRadius:20}}>
+            <BallIcon grade={g} size={22}/>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:g.col2}}>{g.nameFr}</div>
+              <div style={{fontSize:10,color:'rgba(255,255,255,0.3)'}}>{g.min}–{g.max} pts</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{maxWidth:800,margin:'0 auto'}}>
+        {sorted.map((p,i) => {
+          const total=p.pts+p.bonus;
+          const g=(window.getGrade||function(){return window.GRADES[0];})(total);
+          const pct=Math.round((total/235)*100);
+          const rColor=i<3?rankColors[i]:'rgba(255,255,255,0.12)';
+          return (
+            <div key={p.id} style={{
+              display:'grid',gridTemplateColumns:'52px 1fr auto',
+              gap:16,alignItems:'center',padding:'14px 20px',borderRadius:12,marginBottom:8,
+              background:p.isSantab
+                ?'linear-gradient(135deg,rgba(212,175,55,0.12),rgba(232,25,44,0.06))'
+                :i<3?`linear-gradient(135deg,${rankColors[i]}18,${rankColors[i]}08)`:'rgba(255,255,255,0.03)',
+              border:`1px solid ${p.isSantab?'rgba(212,175,55,0.4)':i<3?rankColors[i]+'55':'rgba(255,255,255,0.06)'}`,
+              transition:'all 0.2s',
+            }}>
+              <div style={{textAlign:'center'}}>
+                {p.isSantab
+                  ? <SantabAvatar size={40} animated={true}/>
+                  : <span style={{fontFamily:'Bebas Neue,sans-serif',fontSize:26,color:i<3?rankColors[i]:'var(--muted)'}}>
+                      {i<3?rankIcons[i]:i+1}
+                    </span>
+                }
+              </div>
+              <div>
+                <div style={{fontWeight:700,fontSize:15,marginBottom:6,
+                  color:p.isSantab?'var(--gold)':'var(--white)'}}>{p.name}</div>
+                <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+                  <GradeBadge pts={total}/>
+                  <div style={{flex:1,height:4,background:'rgba(255,255,255,0.08)',borderRadius:2,overflow:'hidden',maxWidth:160}}>
+                    <div style={{height:'100%',width:`${pct}%`,background:p.isSantab?'var(--gold)':g.col2,borderRadius:2,transition:'width 0.8s ease'}}/>
+                  </div>
+                  <span style={{fontSize:11,color:'var(--muted)'}}>{pct}%</span>
+                </div>
+              </div>
+              <div style={{textAlign:'right'}}>
+                <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:30,color:p.isSantab?'var(--gold)':'var(--white)'}}>{total}</div>
+                <div style={{fontSize:11,color:'var(--muted)'}}>+{p.bonus} bonus</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p style={{textAlign:'center',marginTop:20,fontSize:12,color:'var(--muted)'}}>{t('sec_rank_sub')}</p>
+    </Section>
+  );
+};
+
+// ─── POLLS ───────────────────────────────────────────────────────────────────
+const PollsSection = ({ pollVotes, setPollVotes }) => {
+  const { t, lang } = useLang();
+  const vote=(pollId,idx)=>{ if(pollVotes[pollId]!==undefined) return; setPollVotes(p=>({...p,[pollId]:idx})); };
+  return (
+    <Section id="sondages" label={t('sec_polls_label')} title={t('sec_polls_title')} screenLabel="06 Sondages">
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))',gap:24}}>
+        {(window.POLLS||[]).map(poll => {
+          const voted=pollVotes[poll.id]; const hasVoted=voted!==undefined;
+          const q=poll[lang]||poll.fr;
+          return (
+            <div key={poll.id} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:16,padding:24}}>
+              <p style={{fontWeight:700,fontSize:15,marginBottom:18,lineHeight:1.4}}>{q}</p>
+              {poll.options.map((opt,oi)=>{
+                const label=opt[lang]||opt.fr; const isVoted=voted===oi;
+                return (
+                  <div key={oi} onClick={()=>vote(poll.id,oi)} style={{marginBottom:10,cursor:hasVoted?'default':'pointer'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:5,fontSize:13,
+                      color:isVoted?'var(--white)':'var(--muted)',fontWeight:isVoted?600:400}}>
+                      <span>{label}</span>
+                      {hasVoted && <span style={{color:opt.color,fontWeight:700}}>{opt.pct}%</span>}
+                    </div>
+                    <div style={{height:7,background:'rgba(255,255,255,0.07)',borderRadius:4,overflow:'hidden'}}>
+                      <div style={{height:'100%',borderRadius:4,background:isVoted?opt.color:`${opt.color}88`,
+                        width:hasVoted?`${opt.pct}%`:'0%',transition:'width 0.7s cubic-bezier(0.22,1,0.36,1)'}}/>
+                    </div>
+                  </div>
+                );
+              })}
+              <p style={{fontSize:11,color:hasVoted?'var(--green)':'var(--muted)',marginTop:8,textAlign:'center',fontWeight:hasVoted?600:400}}>
+                {hasVoted?t('polls_done'):t('polls_hint')}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </Section>
+  );
+};
+
+// ─── PROGRAMME & TV ───────────────────────────────────────────────────────────
+const ProgrammeSection = () => {
+  const { t, lang } = useLang();
+  const [region, setRegion] = React.useState(() => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+    if (tz.includes('Paris')||tz.includes('Europe/Berlin')||tz.includes('Madrid')) return 'FR';
+    if (tz.includes('London')) return 'UK';
+    if (tz.includes('America/New_York')||tz.includes('America/Chicago')||tz.includes('America/Los_Angeles')) return 'US';
+    if (tz.includes('America/Sao_Paulo')) return 'BR';
+    if (tz.includes('Africa')) return 'AF';
+    return 'FR';
+  });
+  const [filter, setFilter] = React.useState('all');
+
+  const TV_CHANNELS = {
+    FR: ['TF1','beIN Sports','M6'],
+    UK: ['BBC One','ITV'],
+    US: ['FOX','Telemundo','FS1'],
+    DE: ['ARD','ZDF','MagentaTV'],
+    ES: ['TVE','Gol','DAZN'],
+    BR: ['TV Globo','SporTV'],
+    AF: ['Canal+ Afrique','beIN Sports'],
+    ME: ['beIN Sports','Al Kass'],
+    AS: ['SPOTV','CCTV','Fuji TV'],
+    CA: ['TSN','RDS','CTV'],
+    MX: ['TV Azteca','Televisa','TDN'],
+  };
+
+  const SCHEDULE = window.SCHEDULE||[];
+  const groups = [...new Set(SCHEDULE.map(m=>m.group))];
+
+  const filtered = filter==='all' ? SCHEDULE : SCHEDULE.filter(m=>m.group===filter);
+
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const fmtTime = (iso) => {
+    try { return new Date(iso).toLocaleTimeString(lang==='en'?'en-US':lang==='es'?'es-ES':'fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:tz}); }
+    catch { return iso.slice(11,16); }
+  };
+  const fmtDate = (iso) => {
+    try { return new Date(iso).toLocaleDateString(lang==='en'?'en-US':lang==='es'?'es-ES':'fr-FR',{weekday:'short',day:'numeric',month:'short',timeZone:tz}); }
+    catch { return iso.slice(0,10); }
+  };
+
+  const REGIONS = [
+    {k:'FR',l:'🇫🇷 France'},{k:'UK',l:'🇬🇧 UK'},{k:'US',l:'🇺🇸 USA'},
+    {k:'DE',l:'🇩🇪 Allemagne'},{k:'ES',l:'🇪🇸 Espagne'},{k:'BR',l:'🇧🇷 Brésil'},
+    {k:'AF',l:'🌍 Afrique'},{k:'ME',l:'🌙 Moyen-Orient'},{k:'AS',l:'🌏 Asie'},
+    {k:'CA',l:'🇨🇦 Canada'},{k:'MX',l:'🇲🇽 Mexique'},
+  ];
+
+  return (
+    <Section id="programme" label={t('sec_tv_label')} title={t('sec_tv_title')} dark screenLabel="07 Programme">
+      {/* Region selector + timezone info */}
+      <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap',marginBottom:24}}>
+        <span style={{fontSize:12,color:'var(--muted)'}}>📺 {t('tv_region')} :</span>
+        <select value={region} onChange={e=>setRegion(e.target.value)}
+          style={{background:'var(--bg3)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,
+            color:'var(--white)',padding:'7px 12px',fontSize:13,outline:'none',cursor:'pointer'}}>
+          {REGIONS.map(r=><option key={r.k} value={r.k}>{r.l}</option>)}
+        </select>
+        <span style={{fontSize:11,color:'var(--muted)'}}>🕐 Fuseau : {tz}</span>
+      </div>
+
+      {/* Group filter */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:24}}>
+        <button onClick={()=>setFilter('all')} style={{
+          padding:'5px 14px',borderRadius:20,border:'none',cursor:'pointer',fontSize:12,fontWeight:600,
+          background:filter==='all'?'var(--gold)':'rgba(255,255,255,0.07)',
+          color:filter==='all'?'#000':'var(--muted)',transition:'all 0.2s',
+        }}>Tous</button>
+        {'ABCDEFGHIJKL'.split('').map(g => (
+          <button key={g} onClick={()=>setFilter(g==='all'?'all':g)} style={{
+            padding:'5px 12px',borderRadius:20,border:'none',cursor:'pointer',fontSize:12,fontWeight:600,
+            background:filter===g?'var(--gold)':'rgba(255,255,255,0.07)',
+            color:filter===g?'#000':'var(--muted)',transition:'all 0.2s',
+          }}>Gr. {g}</button>
+        ))}
+      </div>
+
+      {/* Channels for region */}
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28,padding:'12px 18px',
+        background:'rgba(212,175,55,0.07)',border:'1px solid rgba(212,175,55,0.25)',borderRadius:12}}>
+        <span style={{fontSize:13,color:'var(--muted)'}}>📡 Diffuseurs :</span>
+        {(TV_CHANNELS[region]||[]).map(ch => (
+          <span key={ch} style={{padding:'4px 12px',background:'rgba(212,175,55,0.15)',borderRadius:20,
+            fontSize:12,fontWeight:700,color:'var(--gold)'}}>{ch}</span>
+        ))}
+      </div>
+
+      {/* Schedule grid */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))',gap:12}}>
+        {filtered.map(m => {
+          const isLive = false; // would be real-time in production
+          return (
+            <div key={m.id} style={{
+              display:'flex',alignItems:'center',gap:14,padding:'14px 16px',
+              background:'rgba(255,255,255,0.03)',
+              border:`1px solid ${isLive?'rgba(232,25,44,0.5)':'rgba(255,255,255,0.07)'}`,
+              borderRadius:12,transition:'all 0.2s',
+            }}>
+              {isLive && (
+                <span style={{fontSize:10,fontWeight:700,color:'#E8192C',display:'flex',alignItems:'center',gap:4,whiteSpace:'nowrap'}}>
+                  <span style={{width:6,height:6,borderRadius:'50%',background:'#E8192C',display:'inline-block',animation:'livePulse 1s infinite'}}/>LIVE
+                </span>
+              )}
+              <div style={{flex:'0 0 38px',textAlign:'center'}}>
+                <div style={{fontSize:11,fontWeight:700,color:'var(--gold)',letterSpacing:'0.08em'}}>Gr.{m.group}</div>
+                <div style={{fontSize:10,color:'var(--muted)',marginTop:2}}>{fmtDate(m.kickoff)}</div>
+                <div style={{fontSize:12,fontWeight:700,color:'var(--white)',marginTop:1}}>{fmtTime(m.kickoff)}</div>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:8,flex:1}}>
+                <img src={window.getFlagUrl(m.teamA.code)} width={28} height={18}
+                  style={{borderRadius:3,objectFit:'cover',border:'1px solid rgba(255,255,255,0.12)'}} alt=""/>
+                <span style={{fontSize:12,fontWeight:600,flex:1,textAlign:'center'}}>vs</span>
+                <img src={window.getFlagUrl(m.teamB.code)} width={28} height={18}
+                  style={{borderRadius:3,objectFit:'cover',border:'1px solid rgba(255,255,255,0.12)'}} alt=""/>
+              </div>
+              <div style={{fontSize:11,color:'var(--muted)',textAlign:'right',flex:'0 0 80px',lineHeight:1.4}}>
+                {m.teamA.name}<br/>{m.teamB.name}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p style={{marginTop:16,fontSize:11,color:'var(--muted)',textAlign:'center'}}>
+        🕐 Horaires affichés en heure locale ({tz})
+      </p>
+    </Section>
+  );
+};
+
+// ─── TOP 15 JOUEURS ───────────────────────────────────────────────────────────
+const PlayersSection = () => {
+  const { t } = useLang();
+  const ref = React.useRef(null);
+  const [activeIdx, setActiveIdx] = React.useState(0);
+  const players = window.PLAYERS||[];
+
+  // Touch swipe
+  const touchStart = React.useRef(null);
+  const onTouchStart = e => { touchStart.current = e.touches[0].clientX; };
+  const onTouchEnd = e => {
+    if (!touchStart.current) return;
+    const dx = e.changedTouches[0].clientX - touchStart.current;
+    if (Math.abs(dx) > 40) {
+      setActiveIdx(i => dx<0 ? Math.min(i+1,players.length-1) : Math.max(i-1,0));
+    }
+    touchStart.current = null;
+  };
+
+  const scrollTo = dir => {
+    const next = Math.max(0, Math.min(players.length-1, activeIdx+dir));
+    setActiveIdx(next);
+    if (ref.current) {
+      const cards = ref.current.children;
+      if (cards[next]) ref.current.scrollLeft = cards[next].offsetLeft - ref.current.offsetLeft - (ref.current.offsetWidth/2) + (cards[next].offsetWidth/2);
+    }
+  };
+
+  const posColors = {'Attaquant':'#E8192C','Ailier':'#FF6B35','Meneur':'#D4AF37','Milieu':'#00B347','Milieu déf.':'#009EDB','Milieu off.':'#7B61FF'};
+
+  const STATS = [
+    {g:36,a:7,m:34,r:9.1},{g:28,a:5,m:32,r:8.7},{g:24,a:12,m:33,r:9.0},
+    {g:18,a:14,m:36,r:8.5},{g:22,a:9,m:35,r:8.6},{g:14,a:12,m:34,r:8.8},
+    {g:8,a:8,m:33,r:8.9},{g:12,a:9,m:32,r:8.7},{g:15,a:13,m:32,r:8.8},
+    {g:16,a:11,m:30,r:8.6},{g:12,a:8,m:31,r:8.4},{g:14,a:10,m:33,r:8.5},
+    {g:9,a:13,m:30,r:8.6},{g:18,a:8,m:31,r:8.4},{g:13,a:10,m:32,r:8.3},
+  ];
+
+  return (
+    <Section id="joueurs" label={t('sec_players_label')} title={t('sec_players_title')} dark screenLabel="07 TOP 15" chapterNum="07">
+      <div ref={ref} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
+        style={{display:'flex',gap:16,overflowX:'auto',paddingBottom:12,
+          scrollBehavior:'smooth',scrollSnapType:'x mandatory',
+          msOverflowStyle:'none',scrollbarWidth:'none'}}>
+        {players.map((p,idx) => {
+          const stat = STATS[idx]||STATS[0];
+          const isActive = idx===activeIdx;
+          return (
+            <div key={p.rank} onClick={()=>setActiveIdx(idx)}
+              style={{
+                flex:`0 0 ${isActive?220:190}px`,
+                background:isActive?'rgba(212,175,55,0.1)':'rgba(255,255,255,0.04)',
+                border:`1px solid ${isActive?'rgba(212,175,55,0.5)':'rgba(255,255,255,0.07)'}`,
+                borderRadius:18,padding:20,scrollSnapAlign:'center',textAlign:'center',
+                transition:'all 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                transform:isActive?'scale(1.04)':'scale(1)',
+                boxShadow:isActive?'0 12px 40px rgba(212,175,55,0.2)':'none',
+                cursor:'pointer',
+              }}>
+              <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:42,
+                color:isActive?'rgba(212,175,55,0.4)':'rgba(255,255,255,0.1)',lineHeight:1}}>#{p.rank}</div>
+              <img src={window.getFlagUrl(p.code)} width={40} height={26}
+                style={{borderRadius:4,objectFit:'cover',margin:'6px auto',display:'block',
+                  border:'1px solid rgba(255,255,255,0.18)'}} alt=""/>
+              <div style={{fontWeight:700,fontSize:14,marginBottom:2,
+                color:isActive?'var(--white)':'rgba(255,255,255,0.85)'}}>{p.name}</div>
+              <div style={{fontSize:11,color:'var(--muted)',marginBottom:8}}>{p.country}</div>
+              <span style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',
+                padding:'3px 10px',borderRadius:20,
+                background:`${posColors[p.pos]||'#667085'}22`,
+                color:posColors[p.pos]||'#667085'}}>{p.pos}</span>
+              {/* Stats */}
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:6,marginTop:12}}>
+                {[{v:stat.g,l:'⚽'},{v:stat.a,l:'🎯'},{v:stat.m,l:'🏟'},{v:stat.r,l:'⭐'}].map((s,i) => (
+                  <div key={i} style={{textAlign:'center',background:'rgba(255,255,255,0.05)',borderRadius:8,padding:'5px 2px'}}>
+                    <div style={{fontSize:10}}>{s.l}</div>
+                    <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:16,color:'var(--gold)',lineHeight:1.1}}>{s.v}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{fontSize:11,color:'rgba(255,255,255,0.45)',marginTop:10,lineHeight:1.5,display:isActive?'block':'none'}}>{p.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{display:'flex',gap:10,justifyContent:'center',alignItems:'center',marginTop:16}}>
+        <button onClick={()=>scrollTo(-1)}
+          style={{width:38,height:38,borderRadius:'50%',background:'var(--bg3)',border:'1px solid rgba(255,255,255,0.1)',
+            color:'var(--white)',fontSize:15,cursor:'pointer',transition:'all 0.2s',display:'flex',alignItems:'center',justifyContent:'center'}}
+          onMouseEnter={e=>{e.currentTarget.style.background='var(--gold)';e.currentTarget.style.color='var(--bg)';}}
+          onMouseLeave={e=>{e.currentTarget.style.background='var(--bg3)';e.currentTarget.style.color='var(--white)';}}>◀</button>
+        <div style={{display:'flex',gap:6}}>
+          {players.map((_,i) => (
+            <div key={i} onClick={()=>setActiveIdx(i)} style={{
+              width:i===activeIdx?20:6,height:6,borderRadius:3,cursor:'pointer',transition:'all 0.3s',
+              background:i===activeIdx?'var(--gold)':'rgba(255,255,255,0.2)',
+            }}/>
+          ))}
+        </div>
+        <button onClick={()=>scrollTo(1)}
+          style={{width:38,height:38,borderRadius:'50%',background:'var(--bg3)',border:'1px solid rgba(255,255,255,0.1)',
+            color:'var(--white)',fontSize:15,cursor:'pointer',transition:'all 0.2s',display:'flex',alignItems:'center',justifyContent:'center'}}
+          onMouseEnter={e=>{e.currentTarget.style.background='var(--gold)';e.currentTarget.style.color='var(--bg)';}}
+          onMouseLeave={e=>{e.currentTarget.style.background='var(--bg3)';e.currentTarget.style.color='var(--white)';}}>▶</button>
+      </div>
+      <p style={{textAlign:'center',marginTop:12,fontSize:11,color:'var(--muted)'}}>Source : <a href="https://www.flashscore.fr/" target="_blank" rel="noopener" style={{color:'var(--gold)'}}>Flashscore.fr</a></p>
+    </Section>
+  );
+};
+
+// ─── COMMUNITY ────────────────────────────────────────────────────────────────
+const CommunitySection = () => {
+  const { t } = useLang();
+  const [photos, setPhotos] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem('cdm-photos'))||[]; }
+    catch { return []; }
+  });
+  const [filter, setFilter] = React.useState('recent');
+  const [lightbox, setLightbox] = React.useState(null);
+  const [uploading, setUploading] = React.useState(false);
+  const fileRef = React.useRef(null);
+
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+      alert('Format invalide. JPG, PNG ou WebP uniquement.'); return;
+    }
+    if (file.size > 5*1024*1024) { alert('Image trop lourde (max 5MB).'); return; }
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const newPhoto = { id:Date.now(), src:ev.target.result, user:'Vous',
+        date:new Date().toLocaleDateString('fr-FR'), likes:0, likedByMe:false };
+      const updated = [newPhoto, ...photos];
+      setPhotos(updated);
+      try { localStorage.setItem('cdm-photos', JSON.stringify(updated)); } catch{}
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+    e.target.value='';
+  };
+
+  const toggleLike = (id) => {
+    const updated = photos.map(p => p.id===id ? {...p, likes:p.likedByMe?p.likes-1:p.likes+1, likedByMe:!p.likedByMe} : p);
+    setPhotos(updated);
+    try { localStorage.setItem('cdm-photos', JSON.stringify(updated)); } catch{}
+  };
+
+  // Demo photos
+  const DEMO = [
+    {id:-1,src:'',user:'Mehdi R.',date:'24 Avr',likes:42,likedByMe:false,demo:true,emoji:'⚽'},
+    {id:-2,src:'',user:'Sarah M.',date:'23 Avr',likes:31,likedByMe:false,demo:true,emoji:'🏆'},
+    {id:-3,src:'',user:'Kevin B.',date:'22 Avr',likes:27,likedByMe:false,demo:true,emoji:'🎉'},
+    {id:-4,src:'',user:'Clara V.',date:'22 Avr',likes:19,likedByMe:false,demo:true,emoji:'🇫🇷'},
+    {id:-5,src:'',user:'Thomas N.',date:'21 Avr',likes:14,likedByMe:false,demo:true,emoji:'🌟'},
+    {id:-6,src:'',user:'Lucie P.',date:'20 Avr',likes:8,likedByMe:false,demo:true,emoji:'🫎'},
+  ];
+
+  const allPhotos = [...photos, ...DEMO];
+  const sorted = filter==='liked' ? [...allPhotos].sort((a,b)=>b.likes-a.likes) : allPhotos;
+
+  const nav = (dir) => {
+    if (lightbox===null) return;
+    const idx = sorted.findIndex(p=>p.id===lightbox);
+    const next = sorted[idx+dir];
+    if (next) setLightbox(next.id);
+  };
+
+  return (
+    <Section id="communaute" label="Partagez vos meilleurs moments" title="COMMUNAUTÉ 📸" screenLabel="08 Communauté" dark chapterNum="08">
+      {/* Actions */}
+      <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap',marginBottom:28}}>
+        <button className="btn-primary" onClick={()=>fileRef.current?.click()}>
+          {uploading ? '⏳ Envoi...' : '📷 Partager une photo'}
+        </button>
+        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleUpload}
+          style={{display:'none'}}/>
+        <div style={{display:'flex',gap:8,marginLeft:'auto'}}>
+          {[{v:'recent',l:'🕐 Récentes'},{v:'liked',l:'❤️ Likées'}].map(f => (
+            <button key={f.v} onClick={()=>setFilter(f.v)} style={{
+              padding:'7px 16px',borderRadius:20,border:'none',cursor:'pointer',fontSize:12,fontWeight:600,
+              background:filter===f.v?'var(--gold)':'rgba(255,255,255,0.07)',
+              color:filter===f.v?'#000':'var(--muted)',transition:'all 0.2s',
+            }}>{f.l}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Masonry grid */}
+      <div style={{columns:'3 240px',columnGap:14}}>
+        {sorted.map((p,i) => (
+          <div key={p.id} style={{
+            breakInside:'avoid',marginBottom:14,borderRadius:14,overflow:'hidden',
+            background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',
+            transition:'all 0.2s',cursor:'pointer',
+            animation:'fadeUp 0.4s ease',animationDelay:`${i*0.05}s`,animationFillMode:'both',
+          }}
+          onMouseEnter={e=>{e.currentTarget.style.transform='scale(1.02)';e.currentTarget.style.borderColor='rgba(212,175,55,0.4)';}}
+          onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.borderColor='rgba(255,255,255,0.08)';}}>
+            {/* Photo */}
+            <div onClick={()=>setLightbox(p.id)} style={{
+              background:p.demo?`linear-gradient(135deg,var(--bg3),var(--bg2))`:'transparent',
+              minHeight:p.demo?120:0,
+              display:'flex',alignItems:'center',justifyContent:'center',
+            }}>
+              {p.demo ? (
+                <span style={{fontSize:48,filter:'drop-shadow(0 0 12px rgba(212,175,55,0.4))'}}>{p.emoji}</span>
+              ) : (
+                <img src={p.src} alt="CDM" style={{width:'100%',display:'block'}}/>
+              )}
+            </div>
+            {/* Footer */}
+            <div style={{padding:'10px 14px',display:'flex',alignItems:'center',gap:10}}>
+              <span style={{fontWeight:600,fontSize:12,flex:1,color:'var(--white)'}}>{p.user}</span>
+              <span style={{fontSize:11,color:'var(--muted)'}}>{p.date}</span>
+              <button onClick={e=>{e.stopPropagation();toggleLike(p.id);}}
+                style={{background:'none',border:'none',cursor:'pointer',fontSize:14,display:'flex',alignItems:'center',gap:4,
+                  color:p.likedByMe?'#E8192C':'var(--muted)',transition:'all 0.2s',
+                  transform:p.likedByMe?'scale(1.2)':'scale(1)'}}>
+                {p.likedByMe?'❤️':'🤍'} <span style={{fontSize:12,fontWeight:600}}>{p.likes}</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox!==null && (() => {
+        const photo = sorted.find(p=>p.id===lightbox);
+        if (!photo) return null;
+        return (
+          <div onClick={()=>setLightbox(null)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.92)',
+            zIndex:500,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+            <div onClick={e=>e.stopPropagation()} style={{maxWidth:700,width:'100%',textAlign:'center'}}>
+              {photo.demo ? (
+                <div style={{width:300,height:300,background:'var(--bg2)',borderRadius:16,
+                  display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto',fontSize:96}}>
+                  {photo.emoji}
+                </div>
+              ) : (
+                <img src={photo.src} alt="CDM" style={{maxWidth:'100%',maxHeight:'70vh',borderRadius:16,display:'block',margin:'0 auto'}}/>
+              )}
+              <div style={{marginTop:16,display:'flex',alignItems:'center',justifyContent:'center',gap:20}}>
+                <button onClick={()=>nav(-1)} style={{background:'var(--bg3)',border:'none',color:'var(--white)',
+                  width:40,height:40,borderRadius:'50%',cursor:'pointer',fontSize:18}}>◀</button>
+                <span style={{color:'var(--white)',fontWeight:600}}>{photo.user} · {photo.date}</span>
+                <button onClick={()=>nav(1)} style={{background:'var(--bg3)',border:'none',color:'var(--white)',
+                  width:40,height:40,borderRadius:'50%',cursor:'pointer',fontSize:18}}>▶</button>
+              </div>
+              <button onClick={()=>setLightbox(null)} style={{position:'absolute',top:20,right:20,
+                background:'rgba(255,255,255,0.1)',border:'none',color:'var(--white)',
+                width:40,height:40,borderRadius:'50%',cursor:'pointer',fontSize:20}}>✕</button>
+            </div>
+          </div>
+        );
+      })()}
+      <p style={{marginTop:20,fontSize:11,color:'var(--muted)',textAlign:'center'}}>
+        Formats acceptés : JPG, PNG, WebP · Max 5MB · Stockage local navigateur
+      </p>
+    </Section>
+  );
+};
+
+// ─── TEAM PICKER ─────────────────────────────────────────────────────────────
+const TeamSection = ({ myTeam, setMyTeam }) => {
+  const { t, lang } = useLang();
+  const tn = tm => lang==='en'?tm.nameEn:lang==='es'?tm.nameEs:tm.name;
+  return (
+    <Section id="monequipe" label={t('sec_team_label')} title={t('sec_team_title')} screenLabel="10 Mon Équipe" chapterNum="10">
+      {myTeam && (
+        <div style={{display:'flex',alignItems:'center',gap:16,padding:'16px 24px',
+          background:'rgba(212,175,55,0.08)',border:'1px solid rgba(212,175,55,0.4)',
+          borderRadius:14,marginBottom:28,maxWidth:360}}>
+          <img src={window.getFlagUrl(myTeam.code)} width={56} height={37}
+            style={{borderRadius:5,objectFit:'cover',border:'1px solid rgba(255,255,255,0.18)'}} alt=""/>
+          <div>
+            <div style={{fontSize:12,color:'var(--muted)',marginBottom:2}}>{t('your_team')}</div>
+            <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:22,color:'var(--gold)'}}>{tn(myTeam)}</div>
+            <div style={{fontSize:12,color:'var(--muted)'}}>{t('group')} {myTeam.group}</div>
+          </div>
+          <button onClick={()=>setMyTeam(null)} style={{marginLeft:'auto',background:'transparent',border:'none',color:'var(--muted)',cursor:'pointer',fontSize:20}}>✕</button>
+        </div>
+      )}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(88px,1fr))',gap:10}}>
+        {(window.TEAMS||[]).map(team => (
+          <div key={team.code} onClick={()=>setMyTeam(team)}
+            style={{display:'flex',flexDirection:'column',alignItems:'center',gap:6,
+              padding:'12px 6px',borderRadius:10,cursor:'pointer',transition:'all 0.15s',
+              background:myTeam?.code===team.code?'rgba(212,175,55,0.1)':'rgba(255,255,255,0.03)',
+              border:myTeam?.code===team.code?'1px solid rgba(212,175,55,0.55)':'1px solid rgba(255,255,255,0.07)',
+              boxShadow:myTeam?.code===team.code?'0 0 16px rgba(212,175,55,0.2)':'none'}}
+            onMouseEnter={e=>{if(myTeam?.code!==team.code)e.currentTarget.style.borderColor='rgba(255,255,255,0.22)';}}
+            onMouseLeave={e=>{if(myTeam?.code!==team.code)e.currentTarget.style.borderColor='rgba(255,255,255,0.07)';}}>
+            <img src={window.getFlagUrl(team.code)} width={36} height={24}
+              style={{borderRadius:3,objectFit:'cover',border:'1px solid rgba(255,255,255,0.12)'}} alt=""/>
+            <span style={{fontSize:9.5,fontWeight:600,textAlign:'center',textTransform:'uppercase',
+              letterSpacing:'0.04em',color:myTeam?.code===team.code?'var(--gold)':'var(--muted)',lineHeight:1.2}}>
+              {tn(team)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+};
+
+Object.assign(window,{MascotsSection,GroupsSection,PredictionsSection,LeaderboardSection,PollsSection,ProgrammeSection,PlayersSection,CommunitySection,TeamSection});
+
+</script>
+
+<!-- main app -->
+<script type="text/babel">
+const { useState, useEffect, useRef, createContext } = React;
+window.LangContext = createContext('fr');
+
+/* ── Stars ── */
+const Stars = () => {
+  const stars = useRef([...Array(80)].map((_,i)=>({
+    id:i,x:Math.random()*100,y:Math.random()*100,
+    w:Math.random()*2.2+0.4,
+    d:(Math.random()*3+2).toFixed(1)+'s',delay:(Math.random()*5).toFixed(1)+'s',
+  }))).current;
+  return (
+    <div className="stars">
+      {stars.map(s=>(
+        <div key={s.id} className="star"
+          style={{left:s.x+'%',top:s.y+'%',width:s.w,height:s.w,'--d':s.d,'--delay':s.delay}}/>
+      ))}
+    </div>
+  );
+};
+
+/* ── Signup modal ── */
+const SignupModal = ({ open, onClose }) => {
+  const { t, lang } = useLang();
+  const [name,setName]=useState('');
+  const [email,setEmail]=useState('');
+  const [team,setTeam]=useState('');
+  const [done,setDone]=useState(false);
+  const submit=()=>{ if(!name||!email)return; setDone(true); setTimeout(()=>{onClose();setDone(false);setName('');setEmail('');setTeam('');},2200); };
+  const tn=t2=>lang==='en'?t2.nameEn:lang==='es'?t2.nameEs:t2.name;
+  return (
+    <Modal open={open} onClose={onClose} title={t('signup')}>
+      {done?(
+        <div style={{textAlign:'center',padding:'24px 0'}}>
+          <div style={{fontSize:52,marginBottom:12}}>🏆</div>
+          <p style={{fontWeight:700,color:'var(--gold)',fontSize:16,marginBottom:6}}>Bienvenue dans la compétition !</p>
+          <p style={{fontSize:13,color:'var(--muted)'}}>Vous débutez avec le Ballon Papier 📄 — visez le Diamant 💎 !</p>
+        </div>
+      ):(
+        <div className="signup-form">
+          <label>Pseudo</label>
+          <input placeholder="Votre pseudo" value={name} onChange={e=>setName(e.target.value)}/>
+          <label>Email</label>
+          <input type="email" placeholder="votre@email.com" value={email} onChange={e=>setEmail(e.target.value)}/>
+          <label>Équipe favorite</label>
+          <select value={team} onChange={e=>setTeam(e.target.value)}>
+            <option value="">—</option>
+            {TEAMS.map(t2=><option key={t2.code} value={t2.code}>{tn(t2)}</option>)}
+          </select>
+          <button className="btn-primary" style={{width:'100%',marginTop:4}} onClick={submit}>REJOINDRE LA COMPÉTITION</button>
+        </div>
+      )}
+    </Modal>
+  );
+};
+
+/* ── Tweaks ── */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "blue",
+  "animSpeed": "fast",
+  "showMockData": true
+}/*EDITMODE-END*/;
+const TweaksPanel = ({ open }) => {
+  const [cfg,setCfg]=useState(()=>{try{return JSON.parse(localStorage.getItem('koncept-tweaks'))||TWEAK_DEFAULTS;}catch{return TWEAK_DEFAULTS;}});
+  const set=(k,v)=>{
+    const next={...cfg,[k]:v};setCfg(next);
+    localStorage.setItem('koncept-tweaks',JSON.stringify(next));
+    window.parent.postMessage({type:'__edit_mode_set_keys',edits:next},'*');
+    if(k==='accentColor') document.documentElement.style.setProperty('--gold',v==='gold'?'#D4AF37':v==='red'?'#E8192C':'#80d8ff');
+  };
+  return (
+    <div className={`tweaks-panel${open?' open':''}`}>
+      <h4>⚙ Tweaks</h4>
+      <div className="tweak-row">
+        <label>Couleur accent</label>
+        <div className="tweak-btns">
+          {[['gold','🟡 Or'],['red','🔴 Rouge'],['blue','💎 Bleu']].map(([v,l])=>(
+            <button key={v} className={`tweak-btn${cfg.accentColor===v?' on':''}`} onClick={()=>set('accentColor',v)}>{l}</button>
+          ))}
+        </div>
+      </div>
+      <div className="tweak-row">
+        <label>Vitesse orbite</label>
+        <div className="tweak-btns">
+          {[['slow','Lente'],['normal','Norm.'],['fast','Rapide']].map(([v,l])=>(
+            <button key={v} className={`tweak-btn${cfg.animSpeed===v?' on':''}`} onClick={()=>set('animSpeed',v)}>{l}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── APP ── */
+const App = () => {
+  const [lang,setLang]=useState(()=>localStorage.getItem('k-lang')||'fr');
+  const [active,setActive]=useState('hero');
+  const [lb,setLb]=useState(()=>{try{return JSON.parse(localStorage.getItem('k-lb'))||INIT_LB;}catch{return INIT_LB;}});
+  const [predictions,setPredictions]=useState(()=>{try{return JSON.parse(localStorage.getItem('k-pred'))||{};}catch{return {};}});
+  const [pollVotes,setPollVotes]=useState(()=>{try{return JSON.parse(localStorage.getItem('k-polls'))||{};}catch{return {};}});
+  const [myTeam,setMyTeam]=useState(()=>{try{return JSON.parse(localStorage.getItem('k-team'))||null;}catch{return null;}});
+  const [signupOpen,setSignupOpen]=useState(false);
+  const [tweaksOpen,setTweaksOpen]=useState(false);
+
+  useEffect(()=>{localStorage.setItem('k-lang',lang);},[lang]);
+  useEffect(()=>{localStorage.setItem('k-lb',JSON.stringify(lb));},[lb]);
+  useEffect(()=>{localStorage.setItem('k-pred',JSON.stringify(predictions));},[predictions]);
+  useEffect(()=>{localStorage.setItem('k-polls',JSON.stringify(pollVotes));},[pollVotes]);
+  useEffect(()=>{if(myTeam)localStorage.setItem('k-team',JSON.stringify(myTeam));},[myTeam]);
+
+  useEffect(()=>{
+    const h=e=>{
+      if(e.data?.type==='__activate_edit_mode')setTweaksOpen(true);
+      if(e.data?.type==='__deactivate_edit_mode')setTweaksOpen(false);
+    };
+    window.addEventListener('message',h);
+    window.parent.postMessage({type:'__edit_mode_available'},'*');
+    return ()=>window.removeEventListener('message',h);
+  },[]);
+
+  useEffect(()=>{
+    const ids=['hero','mascottes','pronostics','classement','programme','sondages','joueurs','communaute','groupes','monequipe'];
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting)setActive(e.target.id);});
+    },{threshold:0.25});
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+    return ()=>obs.disconnect();
+  },[]);
+
+  const scrollTo=id=>{
+    const el=document.getElementById(id);
+    if(el)window.scrollTo({top:el.offsetTop-58,behavior:'smooth'});
+  };
+
+  const t=key=>{const d=window.I18N||{};return((d[lang]||d.fr)||{})[key]||key;};
+
+  const setPredictionsWrapped=fn=>{
+    setPredictions(prev=>{
+      const next=typeof fn==='function'?fn(prev):fn;
+      localStorage.setItem('k-pred',JSON.stringify(next));
+      return next;
+    });
+  };
+
+  return (
+    <window.LangContext.Provider value={lang}>
+      <Nav active={active} onNav={scrollTo} onSignup={()=>setSignupOpen(true)} lang={lang} setLang={setLang}/>
+
+      {/* HERO */}
+      <section id="hero" data-screen-label="01 Hero" className="hero">
+        <Stars/>
+        <div className="hero-content">
+          <p className="hero-tagline">{t('hero_koncept')}</p>
+          <h1 className="hero-title">
+            {lang==='en'?'WORLD\nCUP 2026':lang==='es'?'COPA DEL\nMUNDO 2026':'COUPE DU\nMONDE 2026'}
+          </h1>
+          <div className="hero-mascots">🫎🐆🦅</div>
+          <p className="hero-sub">{t('hero_sub')}</p>
+          <Countdown/>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center'}}>
+            <button className="btn-primary" onClick={()=>setSignupOpen(true)}>{t('signup')}</button>
+            <button className="btn-outline" onClick={()=>scrollTo('pronostics')}>
+              {lang==='en'?'PREDICTIONS →':lang==='es'?'PRONÓSTICOS →':'PRONOSTICS →'}
+            </button>
+          </div>
+          <p className="hero-dates">📅 <span>11 juin 2026</span> – <span>19 juillet 2026</span> · USA · Mexique · Canada</p>
+        </div>
+        <div style={{marginTop:36,position:'relative',zIndex:2}}>
+          <AtomHero/>
+        </div>
+        {/* Floating mascots */}
+        <div style={{position:'absolute',bottom:32,left:32,display:'flex',gap:24,opacity:0.7}}>
+          <MascotIdle emoji="🫎" name="Moo-Deng" color="#009EDB" delay="0s"/>
+          <MascotIdle emoji="🐆" name="Pique" color="#00C853" delay="0.8s"/>
+          <MascotIdle emoji="🦅" name="Tala" color="#E8192C" delay="1.6s"/>
+        </div>
+      </section>
+
+      {/* FIFA Logo strip */}
+      <div style={{background:'var(--bg2)',display:'flex',alignItems:'center',justifyContent:'center',
+        padding:'20px',borderTop:'1px solid rgba(255,255,255,0.05)'}}>
+        <img src={window.__resources&&window.__resources.fifaLogo||'uploads/2026_FIFA_World_Cup.svg.png'}
+          alt="FIFA World Cup 2026" style={{height:80,width:'auto',filter:'brightness(0.9)'}}
+          onError={e=>e.target.style.display='none'}/>
+      </div>
+
+      <div data-screen-label="03 Pronostics"><PredictionsSection predictions={predictions} setPredictions={setPredictionsWrapped}/></div>
+      <div data-screen-label="04 Classement"><LeaderboardSection leaderboard={lb}/></div>
+      <div data-screen-label="05 Programme"><ProgrammeSection/></div>
+      <div data-screen-label="06 Sondages"><PollsSection pollVotes={pollVotes} setPollVotes={setPollVotes}/></div>
+      <div data-screen-label="07 TOP 15"><PlayersSection/></div>
+      <div data-screen-label="08 Communauté"><CommunitySection/></div>
+      <div data-screen-label="09 Groupes"><GroupsSection myTeam={myTeam}/></div>
+      <div data-screen-label="10 Mon Équipe"><TeamSection myTeam={myTeam} setMyTeam={setMyTeam}/></div>
+
+      {/* MASCOTTES — en bas du site */}
+      <div className="mascots-footer" id="mascottes" data-screen-label="11 Mascottes">
+        <div className="max-w">
+          <p className="section-label" style={{justifyContent:'center'}}>Les gardiens officiels du tournoi FIFA 2026</p>
+          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(36px,6vw,72px)',textAlign:'center',marginBottom:8,color:'var(--white)',letterSpacing:'0.04em'}}>
+            LES 3 MASCOTTES OFFICIELLES
+          </h2>
+          <p style={{textAlign:'center',fontSize:13,color:'var(--muted)',marginBottom:0}}>
+            Moo-Deng · Pique · Tala — Les ambassadeurs de la Coupe du Monde 2026
+          </p>
+          <div className="mascots-row">
+            {[
+              {emoji:'🫎',name:'Moo-Deng',country:'Canada',color:'#009EDB',desc:'Esprit nordique',delay:'0s'},
+              {emoji:'🐆',name:'Pique',country:'Mexique',color:'#00C853',desc:'Passion latine',delay:'0.4s'},
+              {emoji:'🦅',name:'Tala',country:'USA',color:'#E8192C',desc:'Vision aiguisée',delay:'0.8s'},
+            ].map((m,i) => (
+              <div key={i} className="mascot-card">
+                <div className="mascot-emoji-wrap" style={{
+                  animationDelay:m.delay,
+                  border:`2px solid ${m.color}44`,
+                }}>
+                  {m.emoji}
+                </div>
+                <div className="mascot-name" style={{color:m.color}}>{m.name}</div>
+                <div className="mascot-sub">{m.country}</div>
+                <div style={{fontSize:12,color:'var(--muted)',marginTop:4,letterSpacing:'0.05em'}}>{m.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <footer className="footer">
+        <div className="footer-logo">KONCEPT × CDM 2026</div>
+        <p style={{fontSize:13,color:'var(--muted)',marginBottom:6}}>🏆 48 nations · 104 matchs · 16 stades · 3 pays hôtes</p>
+        <p style={{fontSize:12,color:'rgba(255,255,255,0.18)',marginBottom:24}}>Source données : FIFA.com · Flashscore.fr · flagcdn.com</p>
+        <button className="btn-primary" onClick={()=>setSignupOpen(true)}>{t('signupFull')}</button>
+      </footer>
+
+      <SignupModal open={signupOpen} onClose={()=>setSignupOpen(false)}/>
+      <TweaksPanel open={tweaksOpen}/>
+    </window.LangContext.Provider>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
