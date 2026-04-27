@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KONCEPT · Pronostics CDM 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -231,6 +231,230 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
   .hero-title{font-size:54px}
   .hero-mascots{font-size:28px}
   .section-title{font-size:40px}
+}
+
+/* ═══════════════ DOOR HERO — Coup d'envoi 11.06.2026 ═══════════════ */
+.door-hero{
+  position:relative;width:100%;min-height:100vh;
+  background:#000;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  perspective:1500px;perspective-origin:50% 50%;
+  isolation:isolate;
+}
+.door-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 50%,#1a1410 0%,#0a0805 40%,#000 100%);
+}
+.door-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px;mix-blend-mode:overlay;opacity:0.25;pointer-events:none;
+}
+.door-spotlight{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  transition:background 250ms cubic-bezier(0.23,1,0.32,1);
+}
+.door-stage{
+  position:relative;z-index:3;
+  width:min(85vw,720px);
+  aspect-ratio:0.72;
+  transform-style:preserve-3d;
+  transition:transform 220ms cubic-bezier(0.23,1,0.32,1);
+}
+.door-image{
+  position:absolute;inset:0;
+  background-image:url('assets/hero/porte_fermee.png');
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  background-color:transparent;
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,0.85)) drop-shadow(0 0 80px rgba(60,40,20,0.4));
+  transform:translateZ(0);
+  transition:filter 1.2s ease;
+}
+.door-stage.open .door-image{
+  background-image:url('assets/hero/porte_ouverte.png');
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,0.7)) drop-shadow(0 0 120px rgba(255,180,80,0.5));
+}
+/* Fallback decorative engraved-stone door if the image is missing */
+.door-image::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(180deg,#0d0a07 0%,#1a1411 30%,#0f0c08 70%,#080605 100%),
+    repeating-linear-gradient(90deg,transparent 0,transparent 8px,rgba(255,200,140,0.02) 8px,rgba(255,200,140,0.02) 9px);
+  border:2px solid rgba(120,90,50,0.15);
+  border-radius:6px 6px 0 0;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,0.8),
+    inset 0 4px 20px rgba(255,200,140,0.03);
+}
+.door-stage::before{
+  content:'';position:absolute;inset:-40px;z-index:-1;
+  background:radial-gradient(ellipse at center,rgba(50,30,15,0.5) 0%,transparent 70%);
+  filter:blur(30px);
+  transform:translateZ(-100px);
+}
+.door-countdown{
+  position:absolute;
+  top:55%;left:50%;
+  transform:translate(-50%,-50%) translateZ(80px);
+  z-index:5;
+  text-align:center;
+  font-family:'Cinzel',serif;
+  color:#E8D9B0;
+  text-shadow:
+    0 0 24px rgba(255,200,100,0.5),
+    0 2px 6px rgba(0,0,0,0.95),
+    0 0 4px rgba(0,0,0,0.95);
+  pointer-events:none;
+  user-select:none;
+  width:90%;
+}
+.door-countdown .units{
+  display:flex;align-items:flex-start;justify-content:center;
+  gap:clamp(10px,2vw,28px);
+}
+.door-countdown .unit{
+  display:flex;flex-direction:column;align-items:center;
+  min-width:clamp(50px,9vw,90px);
+}
+.door-countdown .value{
+  font-size:clamp(2.4rem,7vw,5.2rem);
+  font-weight:800;line-height:0.95;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0.02em;
+}
+.door-countdown .label{
+  font-size:clamp(0.55rem,1vw,0.78rem);
+  letter-spacing:0.32em;
+  margin-top:0.55rem;
+  opacity:0.78;font-weight:500;
+}
+.door-countdown .sep{
+  font-size:clamp(2rem,5vw,4rem);
+  font-weight:300;opacity:0.45;
+  align-self:center;margin-top:-0.2em;
+}
+.door-countdown .kickoff-label{
+  margin-top:clamp(1rem,2vw,1.6rem);
+  font-size:clamp(0.62rem,1.2vw,0.9rem);
+  letter-spacing:0.45em;
+  opacity:0.7;font-weight:600;
+}
+/* J-7 : passage rouge-or */
+.door-countdown.j7{color:#FFD088;}
+.door-countdown.j7 .value{
+  background:linear-gradient(180deg,#FFD088 0%,#FF8040 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 18px rgba(255,150,80,0.55));
+}
+/* J-1 : pulsation */
+.door-countdown.j1{
+  animation:doorPulseGlow 1.8s ease-in-out infinite;
+}
+@keyframes doorPulseGlow{
+  0%,100%{filter:drop-shadow(0 0 24px rgba(255,140,60,0.4));}
+  50%{filter:drop-shadow(0 0 50px rgba(255,170,90,0.95));}
+}
+.door-countdown .value.tick{
+  animation:digitFlip 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes digitFlip{
+  0%{transform:rotateX(-90deg);opacity:0;}
+  100%{transform:rotateX(0);opacity:1;}
+}
+.door-particles{
+  position:absolute;inset:0;pointer-events:none;
+  z-index:6;
+  transform:translateZ(60px);
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.9 0 0 0 0 0.7 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
+  background-size:140px;
+  opacity:0.06;mix-blend-mode:screen;
+  animation:dustDrift 18s linear infinite;
+}
+@keyframes dustDrift{
+  to{background-position:140px 140px;}
+}
+.door-reflection{
+  position:absolute;top:0;bottom:0;left:-50%;width:50%;
+  pointer-events:none;z-index:7;
+  background:linear-gradient(110deg,
+    transparent 30%,
+    rgba(255,220,180,0.06) 48%,
+    rgba(255,235,200,0.10) 50%,
+    rgba(255,220,180,0.06) 52%,
+    transparent 70%);
+  animation:reflectionSlide 9s linear infinite;
+  mix-blend-mode:screen;
+}
+@keyframes reflectionSlide{
+  0%{left:-50%;}
+  100%{left:150%;}
+}
+.door-open-message{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) translateZ(80px);
+  z-index:5;text-align:center;
+  font-family:'Cinzel',serif;color:#FFE8B0;
+  animation:doorOpenIn 1.2s cubic-bezier(0.23,1,0.32,1);
+}
+.door-open-message h2{
+  font-size:clamp(2.2rem,6vw,5rem);
+  font-weight:900;line-height:1;letter-spacing:0.05em;
+  text-shadow:0 0 40px rgba(255,180,80,0.7),0 0 12px rgba(0,0,0,0.95);
+  margin-bottom:1.4rem;
+}
+.door-open-message button{
+  background:linear-gradient(135deg,#D4AF37,#FFD060);
+  color:#0a0805;border:none;
+  padding:14px 32px;border-radius:8px;
+  font-family:'Cinzel',serif;font-weight:700;letter-spacing:0.18em;
+  font-size:0.85rem;cursor:pointer;
+  box-shadow:0 12px 40px rgba(212,175,55,0.4);
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.door-open-message button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 50px rgba(212,175,55,0.6);
+}
+@keyframes doorOpenIn{
+  0%{opacity:0;transform:translate(-50%,-50%) translateZ(80px) scale(0.85);}
+  100%{opacity:1;transform:translate(-50%,-50%) translateZ(80px) scale(1);}
+}
+.door-skip{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  z-index:8;color:#998878;font-size:11px;letter-spacing:0.3em;
+  text-transform:uppercase;font-family:'Cinzel',serif;font-weight:500;
+  opacity:0.55;animation:bounceArrow 2.5s ease-in-out infinite;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  pointer-events:none;
+}
+.door-skip svg{width:14px;height:14px;}
+@keyframes bounceArrow{
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(8px);}
+}
+
+/* Tablet */
+@media (max-width:1023px){
+  .door-stage{width:90vw;}
+}
+/* Mobile */
+@media (max-width:767px){
+  .door-hero{perspective:none;min-height:90vh;}
+  .door-stage{transform:none !important;width:94vw;}
+  .door-countdown{top:54%;}
+  .door-countdown .units{flex-wrap:wrap;gap:6px 14px;}
+  .door-countdown .unit{min-width:60px;}
+  .door-countdown .sep{display:none;}
+  .door-reflection{display:none;}
+}
+/* A11y — reduced motion */
+@media (prefers-reduced-motion:reduce){
+  .door-stage{transform:none !important;transition:none !important;}
+  .door-spotlight{transition:none !important;}
+  .door-reflection,.door-particles,.door-countdown.j1,.door-skip{animation:none !important;}
+  .door-countdown .value.tick{animation:none !important;}
 }
 </style>
 
@@ -878,7 +1102,141 @@ const Modal = ({ open, onClose, title, children }) => {
   );
 };
 
-Object.assign(window,{Nav,SantabAvatar,AtomHero,MascotIdle,Countdown,BallIcon,GradeBadge,WinAnimation,LossAnimation,Section,Modal,useLang});
+// ─── DOOR HERO — Coup d'envoi 11 Juin 2026 (Mexico City UTC-6) ───────────────
+const DoorHero = () => {
+  const { t, lang } = (window.useLang ? useLang() : {t:k=>k,lang:'fr'});
+  const containerRef = React.useRef(null);
+  const stageRef = React.useRef(null);
+  const rafRef = React.useRef(null);
+  const [spot, setSpot] = React.useState({x:50,y:50});
+  const [tick, setTick] = React.useState(Date.now());
+
+  // Mexico City kickoff — UTC-6, no DST in 2026
+  const KICKOFF = React.useMemo(() => new Date('2026-06-11T20:00:00-06:00'), []);
+  const diff = KICKOFF.getTime() - tick;
+  const isOpen = diff <= 0;
+
+  const days  = Math.max(0, Math.floor(diff / 86400000));
+  const hours = Math.max(0, Math.floor((diff % 86400000) / 3600000));
+  const mins  = Math.max(0, Math.floor((diff % 3600000) / 60000));
+  const secs  = Math.max(0, Math.floor((diff % 60000) / 1000));
+
+  // Tick every second
+  React.useEffect(() => {
+    const id = setInterval(() => setTick(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Mouse parallax (skipped on reduced-motion + mobile)
+  React.useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    if (reduce || isMobile) return;
+
+    const container = containerRef.current;
+    const stage = stageRef.current;
+    if (!container || !stage) return;
+
+    const onMove = (e) => {
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const rotY = (x - 0.5) * 16; // ±8°
+        const rotX = (y - 0.5) * -12;
+        stage.style.transform = `perspective(1500px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        setSpot({x: x*100, y: y*100});
+        rafRef.current = null;
+      });
+    };
+    const onLeave = () => {
+      stage.style.transform = 'perspective(1500px) rotateX(0deg) rotateY(0deg)';
+    };
+    container.addEventListener('mousemove', onMove);
+    container.addEventListener('mouseleave', onLeave);
+    return () => {
+      container.removeEventListener('mousemove', onMove);
+      container.removeEventListener('mouseleave', onLeave);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  const isJ7 = !isOpen && days <= 7;
+  const isJ1 = !isOpen && days <= 1;
+
+  const labels = lang==='en'
+    ? {d:'DAYS',h:'HOURS',m:'MIN',s:'SEC',kickoff:"WORLD KICKOFF · JUNE 11, 2026",scroll:'SCROLL TO ENTER'}
+    : lang==='es'
+    ? {d:'DÍAS',h:'HORAS',m:'MIN',s:'SEG',kickoff:'PUNTAPIÉ INICIAL · 11 JUNIO 2026',scroll:'DESLIZA PARA ENTRAR'}
+    : {d:'JOURS',h:'HEURES',m:'MIN',s:'SEC',kickoff:"COUP D'ENVOI DU MONDE · 11 JUIN 2026",scroll:'FAIS DÉFILER POUR ENTRER'};
+
+  const openTitle = lang==='en'?'THE WORLD CUP\nHAS BEGUN'
+                  : lang==='es'?'LA COPA DEL MUNDO\nHA COMENZADO'
+                  : 'LA COUPE DU MONDE\nA COMMENCÉ';
+  const openCta   = lang==='en'?'WATCH MATCHES →' : lang==='es'?'VER PARTIDOS →' : 'VOIR LES MATCHS →';
+
+  return (
+    <section id="door-hero" data-screen-label="00 Door" className="door-hero" ref={containerRef}
+      role="banner" aria-label={isOpen?openTitle.replace('\n',' '):labels.kickoff}>
+      <div className="door-bg" aria-hidden="true"></div>
+      <div className="door-spotlight" aria-hidden="true"
+        style={{background:`radial-gradient(circle at ${spot.x}% ${spot.y}%, rgba(255,220,150,0.18), transparent 38%)`}}/>
+      <div className={`door-stage ${isOpen?'open':''}`} ref={stageRef}>
+        <div className="door-image" role="img" aria-label="Porte gravée — FIFA World Cup 2026"></div>
+
+        {!isOpen && (
+          <div className={`door-countdown${isJ7?' j7':''}${isJ1?' j1':''}`} aria-live="polite" aria-atomic="false">
+            <div className="units">
+              <div className="unit">
+                <div key={days} className="value tick">{String(days).padStart(3,'0')}</div>
+                <div className="label">{labels.d}</div>
+              </div>
+              <span className="sep" aria-hidden="true">:</span>
+              <div className="unit">
+                <div key={hours} className="value tick">{String(hours).padStart(2,'0')}</div>
+                <div className="label">{labels.h}</div>
+              </div>
+              <span className="sep" aria-hidden="true">:</span>
+              <div className="unit">
+                <div key={mins} className="value tick">{String(mins).padStart(2,'0')}</div>
+                <div className="label">{labels.m}</div>
+              </div>
+              <span className="sep" aria-hidden="true">:</span>
+              <div className="unit">
+                <div key={secs} className="value">{String(secs).padStart(2,'0')}</div>
+                <div className="label">{labels.s}</div>
+              </div>
+            </div>
+            <div className="kickoff-label">{labels.kickoff}</div>
+          </div>
+        )}
+
+        {isOpen && (
+          <div className="door-open-message">
+            <h2>{openTitle.split('\n').map((l,i)=><React.Fragment key={i}>{i>0&&<br/>}{l}</React.Fragment>)}</h2>
+            <button onClick={()=>{
+              const el=document.getElementById('programme')||document.getElementById('hero');
+              if(el)window.scrollTo({top:el.offsetTop-58,behavior:'smooth'});
+            }}>{openCta}</button>
+          </div>
+        )}
+
+        <div className="door-particles" aria-hidden="true"></div>
+        <div className="door-reflection" aria-hidden="true"></div>
+      </div>
+
+      <div className="door-skip" aria-hidden="true">
+        <span>{labels.scroll}</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </div>
+    </section>
+  );
+};
+
+Object.assign(window,{Nav,SantabAvatar,AtomHero,MascotIdle,Countdown,BallIcon,GradeBadge,WinAnimation,LossAnimation,Section,Modal,useLang,DoorHero});
 
 </script>
 
@@ -1845,6 +2203,9 @@ const App = () => {
   return (
     <window.LangContext.Provider value={lang}>
       <Nav active={active} onNav={scrollTo} onSignup={()=>setSignupOpen(true)} lang={lang} setLang={setLang}/>
+
+      {/* DOOR HERO — Coup d'envoi 11.06.2026 */}
+      <DoorHero/>
 
       {/* HERO */}
       <section id="hero" data-screen-label="01 Hero" className="hero">
