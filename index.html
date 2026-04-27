@@ -435,6 +435,125 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
   50%{transform:translateX(-50%) translateY(8px);}
 }
 
+/* ─── PHASES de transition kickoff ─────────────────────────────── */
+/* Stack the two doors on top of each other, control via opacity */
+.door-stage .door-image-closed,
+.door-stage .door-image-open{
+  position:absolute;inset:0;
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,0.85)) drop-shadow(0 0 80px rgba(60,40,20,0.4));
+  transform:translateZ(0);
+  transition:opacity 1.6s cubic-bezier(0.4,0,0.2,1),filter 1.6s ease;
+}
+.door-stage .door-image-closed{
+  background-image:url('assets/hero/porte_fermee.png');
+  opacity:1;
+}
+.door-stage .door-image-open{
+  background-image:url('assets/hero/porte_ouverte.png');
+  opacity:0;
+}
+/* Tension : 10s avant kickoff — vibrato + lueur intense */
+.door-stage.phase-tension .door-image-closed{
+  animation:doorTremor 0.18s ease-in-out infinite;
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,0.85)) drop-shadow(0 0 120px rgba(255,180,80,0.55));
+}
+@keyframes doorTremor{
+  0%,100%{transform:translate(0,0);}
+  20%{transform:translate(-1.5px,1px);}
+  40%{transform:translate(1.5px,-1px);}
+  60%{transform:translate(-1px,-1.5px);}
+  80%{transform:translate(1px,1.5px);}
+}
+.door-stage.phase-tension .door-countdown{
+  animation:tensionPulse 1s ease-in-out infinite;
+}
+@keyframes tensionPulse{
+  0%,100%{filter:drop-shadow(0 0 24px rgba(255,140,60,0.5));}
+  50%{filter:drop-shadow(0 0 60px rgba(255,200,90,1));transform:translate(-50%,-50%) translateZ(80px) scale(1.04);}
+}
+/* Burst : 0 à +3s — flash blanc + cross-fade + particules */
+.door-stage.phase-burst .door-image-closed{
+  opacity:0;
+  transition:opacity 0.9s ease-out 0.4s;
+}
+.door-stage.phase-burst .door-image-open{
+  opacity:1;
+  transition:opacity 1.4s ease-in 0.9s;
+}
+.door-stage.phase-burst .door-countdown{
+  opacity:0;
+  transition:opacity 0.4s ease-out;
+}
+.door-stage.phase-burst .door-open-message{
+  animation:doorOpenIn 1.2s cubic-bezier(0.23,1,0.32,1) 1.6s both;
+}
+/* Open phase (final) */
+.door-stage.phase-open .door-image-closed{opacity:0;}
+.door-stage.phase-open .door-image-open{opacity:1;}
+/* Flash overlay */
+.door-flash{
+  position:absolute;top:50%;left:50%;
+  width:60%;height:60%;
+  margin-left:-30%;margin-top:-30%;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,250,235,1) 0%,rgba(255,220,150,0.6) 30%,transparent 70%);
+  opacity:0;pointer-events:none;
+  z-index:8;mix-blend-mode:screen;
+  transform:translateZ(40px) scale(0.1);
+}
+.door-stage.phase-burst .door-flash{
+  animation:flashBurst 2.4s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes flashBurst{
+  0%{opacity:0;transform:translateZ(40px) scale(0.1);}
+  15%{opacity:1;transform:translateZ(40px) scale(1.4);}
+  35%{opacity:0.85;transform:translateZ(40px) scale(2.2);}
+  100%{opacity:0;transform:translateZ(40px) scale(4);}
+}
+/* Expanding ring shockwave */
+.door-shockwave{
+  position:absolute;top:50%;left:50%;
+  width:30%;height:30%;
+  margin-left:-15%;margin-top:-15%;
+  border:2px solid rgba(255,220,150,0.9);
+  border-radius:50%;
+  opacity:0;pointer-events:none;
+  z-index:8;
+  transform:translateZ(40px) scale(0.5);
+}
+.door-stage.phase-burst .door-shockwave{
+  animation:shockwave 1.8s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes shockwave{
+  0%{opacity:0;transform:translateZ(40px) scale(0.3);border-width:3px;}
+  10%{opacity:1;}
+  100%{opacity:0;transform:translateZ(40px) scale(5);border-width:0.5px;}
+}
+/* Gold particle burst */
+.door-particle-burst{
+  position:absolute;top:50%;left:50%;
+  width:1px;height:1px;
+  z-index:9;pointer-events:none;
+  transform:translateZ(50px);
+}
+.door-particle-burst span{
+  position:absolute;top:0;left:0;
+  width:6px;height:6px;
+  border-radius:50%;
+  background:radial-gradient(circle,#FFE4A0 0%,#FFB050 60%,transparent 100%);
+  box-shadow:0 0 8px rgba(255,200,100,0.8);
+  opacity:0;
+}
+.door-stage.phase-burst .door-particle-burst span{
+  animation:particleFly 2s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes particleFly{
+  0%{opacity:1;transform:translate(0,0) scale(1);}
+  60%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--px),var(--py)) scale(0.2);}
+}
+
 /* Tablet */
 @media (max-width:1023px){
   .door-stage{width:90vw;}
@@ -1116,6 +1235,34 @@ const DoorHero = () => {
   const diff = KICKOFF.getTime() - tick;
   const isOpen = diff <= 0;
 
+  // ─── Phase machine ──────────────────────────────────────────
+  // idle    : > 10s before kickoff
+  // tension : 10s → 0s (door tremor + countdown pulse)
+  // burst   : 0 → +3s (white flash + cross-fade + particles)
+  // open    : > 3s after kickoff (final state)
+  const phase = diff > 10000 ? 'idle'
+              : diff > 0     ? 'tension'
+              : diff > -3000 ? 'burst'
+              : 'open';
+  const showCountdown = phase === 'idle' || phase === 'tension' || phase === 'burst';
+  const showMessage   = phase === 'burst' || phase === 'open';
+
+  // Pre-compute particle trajectories (stable across re-renders)
+  const particles = React.useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < 48; i++) {
+      const angle = (i / 48) * Math.PI * 2 + (Math.random()-0.5) * 0.3;
+      const dist = 220 + Math.random() * 320;
+      arr.push({
+        px: Math.cos(angle) * dist,
+        py: Math.sin(angle) * dist,
+        delay: Math.random() * 0.5,
+        size: 4 + Math.random() * 6,
+      });
+    }
+    return arr;
+  }, []);
+
   const days  = Math.max(0, Math.floor(diff / 86400000));
   const hours = Math.max(0, Math.floor((diff % 86400000) / 3600000));
   const mins  = Math.max(0, Math.floor((diff % 3600000) / 60000));
@@ -1182,10 +1329,25 @@ const DoorHero = () => {
       <div className="door-bg" aria-hidden="true"></div>
       <div className="door-spotlight" aria-hidden="true"
         style={{background:`radial-gradient(circle at ${spot.x}% ${spot.y}%, rgba(255,220,150,0.18), transparent 38%)`}}/>
-      <div className={`door-stage ${isOpen?'open':''}`} ref={stageRef}>
-        <div className="door-image" role="img" aria-label="Porte gravée — FIFA World Cup 2026"></div>
+      <div className={`door-stage phase-${phase}`} ref={stageRef}>
+        {/* Two stacked door layers — cross-faded by CSS at kickoff */}
+        <div className="door-image door-image-closed" role="img" aria-label="Porte gravée fermée — FIFA World Cup 2026"></div>
+        <div className="door-image door-image-open" role="img" aria-label="Porte gravée ouverte — la lumière jaillit"></div>
 
-        {!isOpen && (
+        {/* Burst-only effects — flash, shockwave, gold particles */}
+        <div className="door-flash" aria-hidden="true"></div>
+        <div className="door-shockwave" aria-hidden="true"></div>
+        <div className="door-particle-burst" aria-hidden="true">
+          {particles.map((p,i) => (
+            <span key={i} style={{
+              width: p.size+'px', height: p.size+'px',
+              '--px': p.px+'px', '--py': p.py+'px',
+              animationDelay: p.delay+'s',
+            }}/>
+          ))}
+        </div>
+
+        {showCountdown && (
           <div className={`door-countdown${isJ7?' j7':''}${isJ1?' j1':''}`} aria-live="polite" aria-atomic="false">
             <div className="units">
               <div className="unit">
@@ -1212,7 +1374,7 @@ const DoorHero = () => {
           </div>
         )}
 
-        {isOpen && (
+        {showMessage && (
           <div className="door-open-message">
             <h2>{openTitle.split('\n').map((l,i)=><React.Fragment key={i}>{i>0&&<br/>}{l}</React.Fragment>)}</h2>
             <button onClick={()=>{
