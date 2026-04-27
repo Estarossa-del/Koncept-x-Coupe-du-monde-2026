@@ -22,3 +22,5 @@ Le composant `DoorHero` (dans `index.html`) bascule automatiquement à
 
 Si les fichiers sont absents, le composant utilise un fallback CSS
 (gradient stone gravé) qui reste élégant en attendant.
+assets/hero/porte_fermee.png   ← première image que tu as envoyée
+assets/hero/porte_ouverte.png  ← celle que tu viens d'envoyer
