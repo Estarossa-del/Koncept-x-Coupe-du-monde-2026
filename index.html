@@ -8,6 +8,7 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/three@0.169.0/build/three.min.js" crossorigin="anonymous"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -2222,6 +2223,100 @@ Object.assign(window,{MascotsSection,GroupsSection,PredictionsSection,Leaderboar
 const { useState, useEffect, useRef, createContext } = React;
 window.LangContext = createContext('fr');
 
+/* ── CrystalCanvas — FORGE HERO (Three.js interactif) ── */
+const CrystalCanvas = () => {
+  const mountRef = useRef(null);
+  useEffect(() => {
+    const el = mountRef.current;
+    if (!el || !window.THREE) return;
+    const T = window.THREE;
+    const scene = new T.Scene();
+    const camera = new T.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 30;
+    const renderer = new T.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    el.appendChild(renderer.domElement);
+
+    // Éclairage thème CDM
+    scene.add(new T.AmbientLight(0xffffff, 0.5));
+    const lg = new T.PointLight(0xD4AF37, 4, 120);
+    lg.position.set(10, 10, 15);
+    scene.add(lg);
+    const lr = new T.PointLight(0xE8192C, 3, 120);
+    lr.position.set(-10, -8, 5);
+    scene.add(lr);
+
+    const group = new T.Group();
+    scene.add(group);
+    const mouse = new T.Vector2(0, 0);
+    const COLS = [
+      new T.Color('#D4AF37'),
+      new T.Color('#E8192C'),
+      new T.Color('#1E90FF'),
+      new T.Color('#00C853'),
+      new T.Color('#FF6B2B'),
+      new T.Color('#F5D060'),
+    ];
+
+    const spawn = () => {
+      const col = COLS[Math.floor(Math.random() * COLS.length)];
+      const mat = new T.MeshStandardMaterial({
+        color: col, emissive: col, emissiveIntensity: 2,
+        metalness: 0.9, roughness: 0.08, transparent: true, opacity: 0.88,
+      });
+      const geo = new T.IcosahedronGeometry(Math.random() * 1.5 + 0.4, 0);
+      const mesh = new T.Mesh(geo, mat);
+      const vec = new T.Vector3(mouse.x, mouse.y, 0.5).unproject(camera);
+      const dir = vec.sub(camera.position).normalize();
+      mesh.position.copy(camera.position.clone().add(dir.multiplyScalar(-camera.position.z / dir.z)));
+      mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+      mesh._v = new T.Vector3((Math.random()-0.5)*0.025,(Math.random()-0.5)*0.025,(Math.random()-0.5)*0.01);
+      group.add(mesh);
+      if (group.children.length > 80) {
+        const old = group.children[0];
+        group.remove(old);
+        old.geometry.dispose(); old.material.dispose();
+      }
+    };
+    const onMove = (e) => { mouse.x=(e.clientX/window.innerWidth)*2-1; mouse.y=-(e.clientY/window.innerHeight)*2+1; };
+    window.addEventListener('mousedown', spawn);
+    window.addEventListener('mousemove', onMove);
+
+    let rafId;
+    const tick = () => {
+      rafId = requestAnimationFrame(tick);
+      camera.position.z -= 0.008;
+      if (camera.position.z < 10) camera.position.z = 30;
+      group.children.forEach(c => {
+        c.position.add(c._v);
+        c.rotation.x += c._v.y * 0.15;
+        c.rotation.y += c._v.z * 0.15;
+      });
+      renderer.render(scene, camera);
+    };
+    tick();
+
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('mousedown', spawn);
+      window.removeEventListener('mousemove', onMove);
+      group.children.forEach(c => { c.geometry.dispose(); c.material.dispose(); });
+      renderer.dispose();
+      if (el && renderer.domElement.parentNode === el) el.removeChild(renderer.domElement);
+    };
+  }, []);
+  return <div ref={mountRef} style={{position:'absolute',inset:0,zIndex:0,pointerEvents:'none'}} />;
+};
+
 /* ── Stars ── */
 const Stars = () => {
   const stars = useRef([...Array(80)].map((_,i)=>({
@@ -2369,10 +2464,12 @@ const App = () => {
       {/* DOOR HERO — Coup d'envoi 11.06.2026 */}
       <DoorHero/>
 
-      {/* HERO */}
+      {/* HERO — FORGE HERO Crystal Canvas */}
       <section id="hero" data-screen-label="01 Hero" className="hero">
+        <CrystalCanvas/>
         <Stars/>
-        <div className="hero-content">
+        <div className="hero-content" style={{position:'relative',zIndex:2}}>
+          <p style={{fontSize:'9px',textTransform:'uppercase',letterSpacing:'0.3em',color:'var(--gold)',marginBottom:'6px',fontWeight:700,opacity:0.7}}>✦ Cliquez pour créer des cristaux ✦</p>
           <p className="hero-tagline">{t('hero_koncept')}</p>
           <h1 className="hero-title">
             {lang==='en'?'WORLD\nCUP 2026':lang==='es'?'COPA DEL\nMUNDO 2026':'COUPE DU\nMONDE 2026'}
