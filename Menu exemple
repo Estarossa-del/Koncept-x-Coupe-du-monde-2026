@@ -1,0 +1,145 @@
+You are given a task to integrate an existing React component in the codebase
+
+The codebase should support:
+- shadcn project structure  
+- Tailwind CSS
+- Typescript
+
+If it doesn't, provide instructions on how to setup project via shadcn CLI, install Tailwind or Typescript.
+
+Determine the default path for components and styles. 
+If default path for components is not /components/ui, provide instructions on why it's important to create this folder
+Copy-paste this component to /components/ui folder:
+```tsx
+slide-tabs.tsx
+import React, { useRef, useState, useEffect } from "react";
+import { motion } from "framer-motion";
+
+export const SlideTabs = () => {
+  const [position, setPosition] = useState({
+    left: 0,
+    width: 0,
+    opacity: 0,
+  });
+  // State to track the currently selected tab, defaulting to the first tab (index 0)
+  const [selected, setSelected] = useState(0);
+  const tabsRef = useRef([]);
+
+  // This effect runs when the component mounts or when the selected tab changes.
+  // It calculates the position of the selected tab and sets the cursor.
+  useEffect(() => {
+    const selectedTab = tabsRef.current[selected];
+    if (selectedTab) {
+      const { width } = selectedTab.getBoundingClientRect();
+      setPosition({
+        left: selectedTab.offsetLeft,
+        width,
+        opacity: 1,
+      });
+    }
+  }, [selected]);
+
+
+  return (
+    <ul
+      onMouseLeave={() => {
+        // When the mouse leaves the container, reset the cursor
+        // to the position of the currently selected tab.
+        const selectedTab = tabsRef.current[selected];
+        if (selectedTab) {
+            const { width } = selectedTab.getBoundingClientRect();
+            setPosition({
+                left: selectedTab.offsetLeft,
+                width,
+                opacity: 1,
+            });
+        }
+      }}
+      className="relative mx-auto flex w-fit rounded-full border-2 border-black bg-white p-1 dark:border-white dark:bg-neutral-800"
+    >
+      {["Home", "Pricing", "Features", "Docs", "Blog"].map((tab, i) => (
+         <Tab
+            key={tab}
+            ref={(el) => (tabsRef.current[i] = el)}
+            setPosition={setPosition}
+            onClick={() => setSelected(i)}
+          >
+            {tab}
+        </Tab>
+      ))}
+
+      <Cursor position={position} />
+    </ul>
+  );
+};
+
+// The Tab component is wrapped in forwardRef to accept a ref from its parent.
+const Tab = React.forwardRef(({ children, setPosition, onClick }, ref) => {
+  return (
+    <li
+      ref={ref}
+      onClick={onClick}
+      onMouseEnter={() => {
+        if (!ref?.current) return;
+
+        const { width } = ref.current.getBoundingClientRect();
+
+        setPosition({
+          left: ref.current.offsetLeft,
+          width,
+          opacity: 1,
+        });
+      }}
+      className="relative z-10 block cursor-pointer px-3 py-1.5 text-xs uppercase text-white mix-blend-difference md:px-5 md:py-3 md:text-base"
+    >
+      {children}
+    </li>
+  );
+});
+
+
+const Cursor = ({ position }) => {
+  return (
+    <motion.li
+      animate={{
+        ...position,
+      }}
+      className="absolute z-0 h-7 rounded-full bg-black dark:bg-white md:h-12"
+    />
+  );
+};
+
+demo.tsx
+import { SlideTabs } from "@/components/ui/slide-tabs";
+
+export default function DemoOne() {
+  return (
+     <div className="w-full grid h-screen place-content-center bg-white dark:bg-black">
+      <SlideTabs />
+    </div>
+  )
+}
+
+```
+
+Install NPM dependencies:
+```bash
+framer-motion
+```
+
+Implementation Guidelines
+ 1. Analyze the component structure and identify all required dependencies
+ 2. Review the component's argumens and state
+ 3. Identify any required context providers or hooks and install them
+ 4. Questions to Ask
+ - What data/props will be passed to this component?
+ - Are there any specific state management requirements?
+ - Are there any required assets (images, icons, etc.)?
+ - What is the expected responsive behavior?
+ - What is the best place to use this component in the app?
+
+Steps to integrate
+ 0. Copy paste all the code above in the correct directories
+ 1. Install external dependencies
+ 2. Fill image assets with Unsplash stock images you know exist
+ 3. Use lucide-react icons for svgs or logos if component requires them
