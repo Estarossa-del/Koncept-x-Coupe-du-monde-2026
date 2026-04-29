@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KONCEPT · Pronostics CDM 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald:wght@400;600;700&family=Bowlby+One&family=Rubik+Mono+One&family=Rubik:wght@400;600;700&family=Righteous&family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -17,6 +17,8 @@
   --blue:#1E90FF;--green:#00C853;--white:#F2F4FF;--muted:#6A7D9C;
   --festive1:#FF6B2B;--festive2:#00D4AA;
   --chapter-size:clamp(80px,12vw,160px);
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Inter',sans-serif;
 }
 html{scroll-behavior:smooth}
 
@@ -27,10 +29,11 @@ body::after{
   background-repeat:repeat;background-size:180px;
 }
 
-body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;
+body{background:var(--bg);color:var(--white);font-family:var(--font-body);overflow-x:hidden;
   cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cpath d='M8 2 Q8 16 14 18 Q20 16 20 2Z' fill='%23D4AF37'/%3E%3Cpath d='M8 5Q3 5 3 10Q3 15 8 13' fill='none' stroke='%23D4AF37' stroke-width='1.8' stroke-linecap='round'/%3E%3Cpath d='M20 5Q25 5 25 10Q25 15 20 13' fill='none' stroke='%23D4AF37' stroke-width='1.8' stroke-linecap='round'/%3E%3Crect x='12' y='18' width='4' height='6' fill='%23D4AF37'/%3E%3Crect x='8' y='24' width='12' height='3' fill='%23D4AF37' rx='1.5'/%3E%3C/svg%3E") 14 4,auto}
 
-h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:0.04em}
+.section-title,.hero-title,.nav-logo,.footer-logo,.mascot-name,.chapter-num{font-family:var(--font-display) !important}
 
 /* ANRcade-style section header */
 .section-label{
@@ -145,17 +148,89 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
 .signup-form input:focus,.signup-form select:focus{border-color:var(--gold)}
 .signup-form label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em}
 
-/* TWEAKS */
-.tweaks-panel{position:fixed;bottom:24px;right:24px;background:var(--bg2);
-  border:1px solid rgba(212,175,55,0.3);border-radius:16px;padding:20px;width:260px;
-  z-index:1000;display:none;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:slideUp 0.3s ease}
-.tweaks-panel.open{display:block}
-.tweaks-panel h4{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);margin-bottom:16px}
-.tweak-row{margin-bottom:14px}
-.tweak-row label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em}
-.tweak-btns{display:flex;gap:6px}
-.tweak-btn{flex:1;padding:7px 4px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+/* TWEAKS — amplified (4 onglets, 14 contrôles, 10 thèmes) */
+.tweaks-panel{position:fixed;bottom:20px;right:20px;background:var(--bg2);
+  border:1px solid rgba(212,175,55,0.35);border-radius:18px;
+  z-index:1000;display:none;flex-direction:column;overflow:hidden;
+  width:340px;max-height:calc(100vh - 40px);
+  box-shadow:0 24px 80px rgba(0,0,0,0.65);animation:slideUp 0.3s ease}
+.tweaks-panel.open{display:flex}
+.tweaks-head{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(212,175,55,0.08),transparent)}
+.tweaks-head h4{font-family:var(--font-display);font-size:22px;color:var(--gold);letter-spacing:0.1em}
+.tweaks-head .close-x{background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+.tweaks-head .close-x:hover{background:rgba(255,255,255,0.06);color:var(--white)}
+.tweaks-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.25);overflow-x:auto;scrollbar-width:none}
+.tweaks-tabs::-webkit-scrollbar{display:none}
+.tweaks-tab{flex:0 0 auto;padding:9px 14px;background:transparent;border:none;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap}
+.tweaks-tab:hover{color:var(--white)}
+.tweaks-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tweaks-body{padding:16px 18px;overflow-y:auto;flex:1}
+.tweaks-body::-webkit-scrollbar{width:6px}
+.tweaks-body::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.3);border-radius:3px}
+.tweaks-foot{padding:10px 18px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px;background:rgba(0,0,0,0.2)}
+.tweaks-foot button{flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted)}
+.tweaks-foot button:hover{border-color:var(--gold);color:var(--gold)}
+.tweaks-foot button.primary{background:var(--gold);border-color:var(--gold);color:#000}
+.tweaks-foot button.primary:hover{background:var(--gold2)}
+.tweak-row{margin-bottom:18px}
+.tweak-row label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700}
+.tweak-row label .v{color:var(--gold);font-weight:700}
+.tweak-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:6px}
+.tweak-btn{padding:8px 6px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);color:var(--muted);font-size:11px;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;text-align:center;line-height:1.2}
+.tweak-btn:hover{border-color:rgba(212,175,55,0.5);color:var(--white)}
 .tweak-btn.on{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold)}
+.tweak-swatches{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.tweak-swatch{aspect-ratio:1;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,0.1);transition:all 0.15s;position:relative}
+.tweak-swatch:hover{transform:scale(1.15)}
+.tweak-swatch.on{border-color:var(--white);box-shadow:0 0 0 2px var(--gold)}
+.tweak-themes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tweak-theme{padding:14px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;text-align:left;transition:all 0.2s;background:rgba(0,0,0,0.3)}
+.tweak-theme:hover{transform:translateY(-2px);border-color:rgba(212,175,55,0.4)}
+.tweak-theme.on{border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,175,55,0.2)}
+.tweak-theme .name{font-family:var(--font-display);font-size:14px;color:var(--white);letter-spacing:0.08em;margin-bottom:6px}
+.tweak-theme .swabar{display:flex;gap:3px;height:6px;border-radius:3px;overflow:hidden}
+.tweak-color-row{display:flex;gap:8px;align-items:center;margin-top:10px}
+.tweak-color-row input[type="color"]{width:42px;height:32px;border:none;background:transparent;cursor:pointer;border-radius:6px}
+.tweak-color-row .hex{flex:1;font-size:11px;color:var(--muted);font-family:monospace;letter-spacing:0.05em}
+
+/* Data-attribute responsive CSS */
+[data-density="compact"]{font-size:14px}
+[data-density="compact"] section{padding:64px 24px !important}
+[data-density="compact"] .section-title{font-size:clamp(28px,5vw,56px) !important;margin-bottom:32px !important}
+[data-density="spacious"]{font-size:17px}
+[data-density="spacious"] section{padding:140px 24px !important}
+[data-radius="sharp"] *{border-radius:0 !important}
+[data-radius="sharp"] .star,[data-radius="sharp"] .mascot-emoji-wrap,[data-radius="sharp"] .tweak-swatch{border-radius:50% !important}
+[data-radius="round"] .anr-card,[data-radius="round"] .tweaks-panel,[data-radius="round"] button{border-radius:24px !important}
+[data-radius="pill"] button:not(.tweak-btn):not(.close-x):not(.tweaks-tab){border-radius:999px !important}
+[data-cards="glass"] .anr-card{background:rgba(255,255,255,0.06);backdrop-filter:blur(14px);border-color:rgba(255,255,255,0.18)}
+[data-cards="embossed"] .anr-card{background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0.25));box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 8px 24px rgba(0,0,0,0.4);border:none}
+[data-cards="neon"] .anr-card{background:rgba(0,0,0,0.5);border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(212,175,55,0.35);border-radius:14px}
+[data-cards="paper"] .anr-card{background:#F8F4E8;color:#1a1a1a;border-color:rgba(0,0,0,0.1)}
+[data-cards="paper"] .anr-card *{color:#1a1a1a}
+[data-animspeed="off"] *,[data-animspeed="off"] *::before,[data-animspeed="off"] *::after{animation:none !important;transition:none !important}
+[data-animspeed="slow"] *{animation-duration:1.6s !important}
+[data-animspeed="fast"] *{animation-duration:0.5s !important}
+[data-animspeed="turbo"] *{animation-duration:0.25s !important}
+[data-mode="light"]{--bg:#FFF8E7;--bg2:#FFFCF2;--bg3:#F5EBC8;--white:#1a1a2e;--muted:#5a6478}
+[data-mode="light"] body{background:var(--bg)}
+[data-mode="festival"]{--bg:#0E0420;--bg2:#1A0A36;--bg3:#2A1255}
+[data-grain="off"] body::after{display:none}
+[data-grain="heavy"] body::after{opacity:0.09}
+[data-cursor="ball"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='12' fill='white' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M14 2 L18 8 L14 14 L10 8Z M22 14 L20 20 L14 22 L8 20 L6 14' stroke='black' stroke-width='1.2' fill='none'/%3E%3C/svg%3E") 14 14,auto}
+[data-hero="banner"] .hero{min-height:60vh;padding:80px 24px 40px}
+[data-hero="banner"] .hero-title{font-size:clamp(48px,7vw,90px)}
+[data-hero="minimal"] .hero{min-height:50vh}
+[data-hero="minimal"] .hero .stars,[data-hero="minimal"] .hero-mascots{display:none}
+[data-hero="minimal"] .hero-title{font-size:clamp(40px,6vw,72px)}
+[data-stars="off"] .stars{display:none}
+[data-stars="few"] .star:nth-child(n+20){display:none}
+[data-stars="galaxy"] .star{opacity:0.9}
+[data-trophy="S"] .door-stage{width:min(340px,70vw)}
+[data-trophy="L"] .door-stage{width:min(680px,92vw)}
+[data-trophy="XL"] .door-stage{width:min(820px,96vw)}
+.confetti-piece{position:fixed;width:8px;height:14px;top:-20px;z-index:9997;pointer-events:none;animation:confettiFall var(--dur,4s) linear forwards}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg)}}
 
 /* FOOTER */
 .footer{background:var(--bg2);border-top:1px solid rgba(212,175,55,0.12);padding:64px 24px;text-align:center;position:relative;overflow:hidden}
@@ -2369,37 +2444,312 @@ const SignupModal = ({ open, onClose }) => {
   );
 };
 
-/* ── Tweaks ── */
+/* ── Tweaks — amplified ── */
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accentColor": "blue",
-  "animSpeed": "fast",
-  "showMockData": true
+  "theme": "classique",
+  "accent": "#D4AF37",
+  "mode": "dark",
+  "font": "bebas",
+  "density": "normal",
+  "radius": "round",
+  "cards": "default",
+  "animSpeed": "normal",
+  "grain": "subtle",
+  "stars": "many",
+  "trophy": "M",
+  "hero": "atom",
+  "cursor": "default",
+  "confetti": "subtle"
 }/*EDITMODE-END*/;
-const TweaksPanel = ({ open }) => {
-  const [cfg,setCfg]=useState(()=>{try{return JSON.parse(localStorage.getItem('koncept-tweaks'))||TWEAK_DEFAULTS;}catch{return TWEAK_DEFAULTS;}});
+
+const THEMES = {
+  festival:  {name:'Festival',  bg:'#0E0420',bg2:'#1A0A36',accent:'#FFB300',red:'#E8192C',green:'#00C853',blue:'#1E90FF'},
+  neon:      {name:'Néon',      bg:'#05060F',bg2:'#0E0F1F',accent:'#00F5FF',red:'#FF2EC4',green:'#39FF14',blue:'#7B2EFF'},
+  classique: {name:'Classique', bg:'#05080F',bg2:'#0A1220',accent:'#D4AF37',red:'#E8192C',green:'#00C853',blue:'#1E90FF'},
+  sunset:    {name:'Sunset',    bg:'#1A0A1F',bg2:'#2A1530',accent:'#FF7E5F',red:'#FF4E50',green:'#FEB47B',blue:'#FFB300'},
+  midnight:  {name:'Midnight',  bg:'#020412',bg2:'#06091F',accent:'#5DADE2',red:'#A569BD',green:'#48C9B0',blue:'#5DADE2'},
+  candy:     {name:'Candy',     bg:'#FDEBF7',bg2:'#FFF5FA',accent:'#FF1493',red:'#FF4081',green:'#00BFA5',blue:'#7C4DFF'},
+  pitch:     {name:'Terrain',   bg:'#0B2A1A',bg2:'#10402A',accent:'#FFFFFF',red:'#E8192C',green:'#00C853',blue:'#FDD835'},
+  vintage:   {name:'Vintage',   bg:'#2C1810',bg2:'#3D2418',accent:'#E6B449',red:'#C0392B',green:'#8B7355',blue:'#D4A574'},
+  carnival:  {name:'Carnaval',  bg:'#1B0033',bg2:'#330055',accent:'#FFD700',red:'#FF1744',green:'#00E676',blue:'#00B8D4'},
+  stadium:   {name:'Stade',     bg:'#0A0F1E',bg2:'#0F1730',accent:'#FF6B00',red:'#FF1744',green:'#76FF03',blue:'#00B0FF'},
+};
+const FONT_MAP = {
+  bebas:     {display:'"Bebas Neue",sans-serif',    body:'"Inter",sans-serif',       label:'Bebas Neue'},
+  anton:     {display:'"Anton",sans-serif',          body:'"Inter",sans-serif',       label:'Anton'},
+  oswald:    {display:'"Oswald",sans-serif',         body:'"Inter",sans-serif',       label:'Oswald'},
+  bowlby:    {display:'"Bowlby One",sans-serif',     body:'"Inter",sans-serif',       label:'Bowlby'},
+  rubik:     {display:'"Rubik Mono One",sans-serif', body:'"Rubik",sans-serif',       label:'Rubik'},
+  righteous: {display:'"Righteous",sans-serif',      body:'"Inter",sans-serif',       label:'Righteous'},
+};
+const ACCENT_SWATCHES = ['#D4AF37','#FFB300','#FF6B00','#E8192C','#FF1493','#00F5FF','#39FF14','#1E90FF','#7C4DFF','#FF7E5F','#00BFA5','#FFFFFF'];
+const TWEAK_TABS = [
+  {id:'theme',  label:'🎨 Thème'},
+  {id:'type',   label:'🔤 Typo'},
+  {id:'layout', label:'📐 Layout'},
+  {id:'fx',     label:'✨ FX'},
+];
+
+const TweaksPanel = ({ open, onClose }) => {
+  const [cfg,setCfg] = useState(()=>{
+    try{return {...TWEAK_DEFAULTS,...JSON.parse(localStorage.getItem('koncept-tweaks-v2')||'{}')};}
+    catch{return TWEAK_DEFAULTS;}
+  });
+  const [tab,setTab] = useState('theme');
+
+  useEffect(()=>{
+    const html = document.documentElement;
+    const body = document.body;
+    const t = THEMES[cfg.theme] || THEMES.classique;
+    html.style.setProperty('--bg',t.bg);
+    html.style.setProperty('--bg2',t.bg2);
+    html.style.setProperty('--gold',cfg.accent||t.accent);
+    html.style.setProperty('--gold2',cfg.accent||t.accent);
+    html.style.setProperty('--red',t.red);
+    html.style.setProperty('--green',t.green);
+    html.style.setProperty('--blue',t.blue);
+    const f = FONT_MAP[cfg.font]||FONT_MAP.bebas;
+    html.style.setProperty('--font-display',f.display);
+    html.style.setProperty('--font-body',f.body);
+    body.dataset.density = cfg.density;
+    body.dataset.radius  = cfg.radius;
+    body.dataset.cards   = cfg.cards;
+    body.dataset.animspeed = cfg.animSpeed;
+    body.dataset.grain   = cfg.grain;
+    body.dataset.mode    = cfg.mode;
+    body.dataset.cursor  = cfg.cursor;
+    body.dataset.hero    = cfg.hero;
+    body.dataset.stars   = cfg.stars;
+    body.dataset.trophy  = cfg.trophy;
+  },[cfg]);
+
   const set=(k,v)=>{
-    const next={...cfg,[k]:v};setCfg(next);
-    localStorage.setItem('koncept-tweaks',JSON.stringify(next));
-    window.parent.postMessage({type:'__edit_mode_set_keys',edits:next},'*');
-    if(k==='accentColor') document.documentElement.style.setProperty('--gold',v==='gold'?'#D4AF37':v==='red'?'#E8192C':'#80d8ff');
+    const next={...cfg,[k]:v};
+    setCfg(next);
+    localStorage.setItem('koncept-tweaks-v2',JSON.stringify(next));
+    try{window.parent.postMessage({type:'__edit_mode_set_keys',edits:next},'*');}catch(e){}
   };
+  const reset=()=>setCfg(TWEAK_DEFAULTS);
+  const randomize=()=>{
+    const pick=a=>a[Math.floor(Math.random()*a.length)];
+    setCfg({
+      theme:pick(Object.keys(THEMES)),accent:pick(ACCENT_SWATCHES),
+      mode:pick(['dark','light','festival']),font:pick(Object.keys(FONT_MAP)),
+      density:pick(['compact','normal','spacious']),radius:pick(['sharp','default','round','pill']),
+      cards:pick(['default','glass','embossed','neon','paper']),
+      animSpeed:pick(['slow','normal','fast','turbo']),grain:pick(['off','subtle','heavy']),
+      stars:pick(['off','few','many','galaxy']),trophy:pick(['S','M','L','XL']),
+      hero:pick(['atom','banner','minimal']),cursor:pick(['default','ball']),
+      confetti:pick(['off','subtle','wild']),
+    });
+  };
+  const handleClose=()=>{if(onClose)onClose();try{window.parent.postMessage({type:'__edit_mode_dismissed'},'*');}catch(e){}};
+
+  if(!open) return null;
+  const Btn=({k,v,label})=>(
+    <button className={`tweak-btn${cfg[k]===v?' on':''}`} onClick={()=>set(k,v)}>{label}</button>
+  );
   return (
-    <div className={`tweaks-panel${open?' open':''}`}>
-      <h4>⚙ Tweaks</h4>
-      <div className="tweak-row">
-        <label>Couleur accent</label>
-        <div className="tweak-btns">
-          {[['gold','🟡 Or'],['red','🔴 Rouge'],['blue','💎 Bleu']].map(([v,l])=>(
-            <button key={v} className={`tweak-btn${cfg.accentColor===v?' on':''}`} onClick={()=>set('accentColor',v)}>{l}</button>
-          ))}
-        </div>
+    <div className="tweaks-panel open">
+      <div className="tweaks-head">
+        <h4>⚙ TWEAKS</h4>
+        <button className="close-x" onClick={handleClose}>×</button>
       </div>
-      <div className="tweak-row">
-        <label>Vitesse orbite</label>
-        <div className="tweak-btns">
-          {[['slow','Lente'],['normal','Norm.'],['fast','Rapide']].map(([v,l])=>(
-            <button key={v} className={`tweak-btn${cfg.animSpeed===v?' on':''}`} onClick={()=>set('animSpeed',v)}>{l}</button>
-          ))}
+      <div className="tweaks-tabs">
+        {TWEAK_TABS.map(t=>(
+          <button key={t.id} className={`tweaks-tab${tab===t.id?' active':''}`} onClick={()=>setTab(t.id)}>{t.label}</button>
+        ))}
+      </div>
+      <div className="tweaks-body">
+        {tab==='theme' && <>
+          <div className="tweak-row">
+            <label>Palette <span className="v">{(THEMES[cfg.theme]||{}).name}</span></label>
+            <div className="tweak-themes">
+              {Object.entries(THEMES).map(([k,t])=>(
+                <button key={k} className={`tweak-theme${cfg.theme===k?' on':''}`} onClick={()=>set('theme',k)}>
+                  <div className="name">{t.name}</div>
+                  <div className="swabar">
+                    <div style={{flex:1,background:t.bg}}/><div style={{flex:1,background:t.bg2}}/>
+                    <div style={{flex:1,background:t.accent}}/><div style={{flex:1,background:t.red}}/>
+                    <div style={{flex:1,background:t.green}}/>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Accent <span className="v">{cfg.accent}</span></label>
+            <div className="tweak-swatches">
+              {ACCENT_SWATCHES.map(c=>(
+                <div key={c} className={`tweak-swatch${cfg.accent===c?' on':''}`} style={{background:c}} onClick={()=>set('accent',c)}/>
+              ))}
+            </div>
+            <div className="tweak-color-row">
+              <input type="color" value={cfg.accent} onChange={e=>set('accent',e.target.value)}/>
+              <span className="hex">Couleur personnalisée</span>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Mode <span className="v">{cfg.mode}</span></label>
+            <div className="tweak-btns">
+              <Btn k="mode" v="dark" label="🌙 Sombre"/><Btn k="mode" v="light" label="☀️ Clair"/><Btn k="mode" v="festival" label="🎉 Festif"/>
+            </div>
+          </div>
+        </>}
+        {tab==='type' && <>
+          <div className="tweak-row">
+            <label>Police <span className="v">{(FONT_MAP[cfg.font]||{}).label}</span></label>
+            <div className="tweak-btns" style={{gridTemplateColumns:'1fr 1fr'}}>
+              {Object.entries(FONT_MAP).map(([k,f])=>(
+                <button key={k} className={`tweak-btn${cfg.font===k?' on':''}`} onClick={()=>set('font',k)} style={{fontFamily:f.display,fontSize:14,padding:'12px 6px'}}>{f.label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Densité <span className="v">{cfg.density}</span></label>
+            <div className="tweak-btns">
+              <Btn k="density" v="compact" label="Compact"/><Btn k="density" v="normal" label="Normal"/><Btn k="density" v="spacious" label="Aéré"/>
+            </div>
+          </div>
+        </>}
+        {tab==='layout' && <>
+          <div className="tweak-row">
+            <label>Coins <span className="v">{cfg.radius}</span></label>
+            <div className="tweak-btns">
+              <Btn k="radius" v="sharp" label="◻ Net"/><Btn k="radius" v="default" label="◫ Std"/><Btn k="radius" v="round" label="⬭ Doux"/><Btn k="radius" v="pill" label="⬬ Pilule"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Cartes <span className="v">{cfg.cards}</span></label>
+            <div className="tweak-btns" style={{gridTemplateColumns:'1fr 1fr'}}>
+              <Btn k="cards" v="default" label="Standard"/><Btn k="cards" v="glass" label="✨ Verre"/>
+              <Btn k="cards" v="embossed" label="🪨 Embossé"/><Btn k="cards" v="neon" label="💡 Néon"/><Btn k="cards" v="paper" label="📜 Papier"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Hero <span className="v">{cfg.hero}</span></label>
+            <div className="tweak-btns">
+              <Btn k="hero" v="atom" label="⚛ Atome"/><Btn k="hero" v="banner" label="🎌 Bannière"/><Btn k="hero" v="minimal" label="− Minimal"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Trophée <span className="v">{cfg.trophy}</span></label>
+            <div className="tweak-btns">
+              <Btn k="trophy" v="S" label="S"/><Btn k="trophy" v="M" label="M"/><Btn k="trophy" v="L" label="L"/><Btn k="trophy" v="XL" label="XL"/>
+            </div>
+          </div>
+        </>}
+        {tab==='fx' && <>
+          <div className="tweak-row">
+            <label>Vitesse anim <span className="v">{cfg.animSpeed}</span></label>
+            <div className="tweak-btns">
+              <Btn k="animSpeed" v="off" label="Off"/><Btn k="animSpeed" v="slow" label="Lent"/>
+              <Btn k="animSpeed" v="normal" label="Std"/><Btn k="animSpeed" v="fast" label="Vif"/><Btn k="animSpeed" v="turbo" label="Turbo"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Étoiles <span className="v">{cfg.stars}</span></label>
+            <div className="tweak-btns">
+              <Btn k="stars" v="off" label="Off"/><Btn k="stars" v="few" label="Rares"/>
+              <Btn k="stars" v="many" label="Standard"/><Btn k="stars" v="galaxy" label="Galaxie"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Grain film <span className="v">{cfg.grain}</span></label>
+            <div className="tweak-btns">
+              <Btn k="grain" v="off" label="Off"/><Btn k="grain" v="subtle" label="Subtil"/><Btn k="grain" v="heavy" label="Marqué"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Curseur <span className="v">{cfg.cursor}</span></label>
+            <div className="tweak-btns">
+              <Btn k="cursor" v="default" label="🏆 Trophée"/><Btn k="cursor" v="ball" label="⚽ Ballon"/>
+            </div>
+          </div>
+          <div className="tweak-row">
+            <label>Confettis <span className="v">{cfg.confetti}</span></label>
+            <div className="tweak-btns">
+              <Btn k="confetti" v="off" label="Off"/><Btn k="confetti" v="subtle" label="Subtil"/><Btn k="confetti" v="wild" label="🎉 Folie"/>
+            </div>
+          </div>
+        </>}
+      </div>
+      <div className="tweaks-foot">
+        <button onClick={randomize}>🎲 Random</button>
+        <button onClick={reset}>↺ Reset</button>
+        <button className="primary" onClick={handleClose}>OK</button>
+      </div>
+    </div>
+  );
+};
+
+/* ── MascotsSection — interactive hover ── */
+const MascotsSection = () => {
+  const { t } = useLang ? useLang() : {t:k=>k};
+  const [hov, setHov] = useState(null);
+  const mascots = [
+    { id:'moose', emoji:'🫎', name:'Moo-Deng', country:'Canada', code:'CA', color:'#009EDB',
+      trait:'Esprit nordique · Force tranquille',
+      desc:"Représentant du Canada, Moo-Deng incarne la détermination des terres du Nord. Son énergie communicative galvanise les foules.",
+      tags:['🍁 Canada','Élan royal','#NordStrong'] },
+    { id:'jaguar', emoji:'🐆', name:'Pique', country:'Mexique', code:'MX', color:'#00B347',
+      trait:'Passion latine · Agilité légendaire',
+      desc:"Pique est le cœur battant du tournoi. Agile et passionné comme le football mexicain, il électrise chaque stade de sa présence flamboyante.",
+      tags:['🇲🇽 Mexique','Jaguar aztèque','#VivaElFutbol'] },
+    { id:'eagle', emoji:'🦅', name:'Tala', country:'US', code:'US', color:'#E8192C',
+      trait:"Vision aiguisée · Leadership américain",
+      desc:"Tala plane au-dessus du tournoi avec une vue imprenable. Symbolisant la liberté et l'excellence, il incarne le rêve américain du football.",
+      tags:['🇺🇸 USA','Aigle chauve','#USAStrong'] },
+  ];
+  return (
+    <div className="mascots-footer" id="mascottes" data-screen-label="11 Mascottes">
+      <div className="max-w">
+        <p className="section-label" style={{justifyContent:'center'}}>Les gardiens officiels du tournoi FIFA 2026</p>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(36px,6vw,72px)',textAlign:'center',marginBottom:8,color:'var(--white)',letterSpacing:'0.04em'}}>
+          LES 3 MASCOTTES OFFICIELLES
+        </h2>
+        <p style={{textAlign:'center',fontSize:13,color:'var(--muted)',marginBottom:40}}>
+          Moo-Deng · Pique · Tala — Ambassadeurs de la Coupe du Monde 2026
+        </p>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:24}}>
+          {mascots.map(m => {
+            const isH = hov===m.id;
+            return (
+              <div key={m.id}
+                onMouseEnter={()=>setHov(m.id)}
+                onMouseLeave={()=>setHov(null)}
+                style={{
+                  background:isH?`${m.color}18`:'rgba(255,255,255,0.03)',
+                  border:`1px solid ${isH?m.color+'66':'rgba(255,255,255,0.07)'}`,
+                  borderRadius:20, padding:32,
+                  transition:'all 0.35s ease',
+                  transform:isH?'translateY(-6px)':'none',
+                  boxShadow:isH?`0 20px 60px ${m.color}33`:'none',
+                  cursor:'default', overflow:'hidden'
+                }}>
+                <div style={{
+                  fontSize:'clamp(52px,8vw,72px)', lineHeight:1, marginBottom:16,
+                  filter:isH?`drop-shadow(0 0 20px ${m.color}88)`:'none',
+                  transition:'filter 0.35s',
+                  animation:'mascotBounce 2.5s ease-in-out infinite',
+                }}>{m.emoji}</div>
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                  <img src={window.getFlagUrl(m.code)} width={28} height={18}
+                    style={{borderRadius:3,objectFit:'cover'}} alt={m.country}
+                    onError={e=>e.target.style.display='none'}/>
+                  <span style={{fontFamily:'var(--font-display)',fontSize:28,color:'var(--white)',letterSpacing:'0.05em'}}>{m.name}</span>
+                </div>
+                <div style={{fontSize:12,fontWeight:600,color:m.color,marginBottom:12,letterSpacing:'0.08em'}}>{m.trait}</div>
+                <p style={{fontSize:13,color:'var(--muted)',lineHeight:1.6,marginBottom:16}}>{m.desc}</p>
+                <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                  {m.tags.map((tag,i)=>(
+                    <span key={i} style={{fontSize:11,padding:'3px 10px',borderRadius:20,
+                      background:`${m.color}1a`,color:m.color,fontWeight:600}}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -2513,37 +2863,8 @@ const App = () => {
       <div data-screen-label="09 Groupes"><GroupsSection myTeam={myTeam}/></div>
       <div data-screen-label="10 Mon Équipe"><TeamSection myTeam={myTeam} setMyTeam={setMyTeam}/></div>
 
-      {/* MASCOTTES — en bas du site */}
-      <div className="mascots-footer" id="mascottes" data-screen-label="11 Mascottes">
-        <div className="max-w">
-          <p className="section-label" style={{justifyContent:'center'}}>Les gardiens officiels du tournoi FIFA 2026</p>
-          <h2 style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'clamp(36px,6vw,72px)',textAlign:'center',marginBottom:8,color:'var(--white)',letterSpacing:'0.04em'}}>
-            LES 3 MASCOTTES OFFICIELLES
-          </h2>
-          <p style={{textAlign:'center',fontSize:13,color:'var(--muted)',marginBottom:0}}>
-            Moo-Deng · Pique · Tala — Les ambassadeurs de la Coupe du Monde 2026
-          </p>
-          <div className="mascots-row">
-            {[
-              {emoji:'🫎',name:'Moo-Deng',country:'Canada',color:'#009EDB',desc:'Esprit nordique',delay:'0s'},
-              {emoji:'🐆',name:'Pique',country:'Mexique',color:'#00C853',desc:'Passion latine',delay:'0.4s'},
-              {emoji:'🦅',name:'Tala',country:'USA',color:'#E8192C',desc:'Vision aiguisée',delay:'0.8s'},
-            ].map((m,i) => (
-              <div key={i} className="mascot-card">
-                <div className="mascot-emoji-wrap" style={{
-                  animationDelay:m.delay,
-                  border:`2px solid ${m.color}44`,
-                }}>
-                  {m.emoji}
-                </div>
-                <div className="mascot-name" style={{color:m.color}}>{m.name}</div>
-                <div className="mascot-sub">{m.country}</div>
-                <div style={{fontSize:12,color:'var(--muted)',marginTop:4,letterSpacing:'0.05em'}}>{m.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* MASCOTTES — section interactive en bas du site */}
+      <MascotsSection/>
 
       <footer className="footer">
         <div className="footer-logo">KONCEPT × CDM 2026</div>
@@ -2553,7 +2874,7 @@ const App = () => {
       </footer>
 
       <SignupModal open={signupOpen} onClose={()=>setSignupOpen(false)}/>
-      <TweaksPanel open={tweaksOpen}/>
+      <TweaksPanel open={tweaksOpen} onClose={()=>setTweaksOpen(false)}/>
     </window.LangContext.Provider>
   );
 };
