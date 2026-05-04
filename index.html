@@ -2446,20 +2446,20 @@ const SignupModal = ({ open, onClose }) => {
 
 /* ── Tweaks — amplified ── */
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "theme": "classique",
+  "theme": "festival",
   "accent": "#D4AF37",
   "mode": "dark",
   "font": "bebas",
   "density": "normal",
   "radius": "round",
-  "cards": "default",
+  "cards": "neon",
   "animSpeed": "normal",
-  "grain": "subtle",
-  "stars": "many",
-  "trophy": "M",
+  "grain": "off",
+  "stars": "galaxy",
+  "trophy": "L",
   "hero": "atom",
   "cursor": "default",
-  "confetti": "subtle"
+  "confetti": "wild"
 }/*EDITMODE-END*/;
 
 const THEMES = {
@@ -2826,7 +2826,6 @@ const App = () => {
           </h1>
           <div className="hero-mascots">🫎🐆🦅</div>
           <p className="hero-sub">{t('hero_sub')}</p>
-          <Countdown/>
           <div style={{display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center'}}>
             <a href="signin.html" className="btn-primary" style={{textDecoration:'none'}}>{t('signup')}</a>
             <button className="btn-outline" onClick={()=>scrollTo('pronostics')}>
