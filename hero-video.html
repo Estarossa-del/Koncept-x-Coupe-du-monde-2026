@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NavbarHero — KONCEPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- React 18 + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<!-- Tailwind CDN (v3, dark mode via class) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Outfit', 'Work Sans', 'sans-serif'],
+      },
+      colors: {
+        background:   'hsl(var(--background))',
+        foreground:   'hsl(var(--foreground))',
+        card:         'hsl(var(--card))',
+        border:       'hsl(var(--border))',
+        muted:        'hsl(var(--muted))',
+        'muted-foreground': 'hsl(var(--muted-foreground))',
+        ring:         'hsl(var(--ring))',
+      },
+    },
+  },
+};
+</script>
+
+<style>
+/* ── shadcn-style CSS variables (light mode) ── */
+:root {
+  --background:        210 40% 98%;
+  --foreground:        222 47% 11%;
+  --card:              0 0% 100%;
+  --border:            214 32% 91%;
+  --muted:             210 40% 94%;
+  --muted-foreground:  215 16% 47%;
+  --ring:              221 83% 53%;
+  --radius:            1rem;
+}
+
+/* dark mode variables */
+.dark {
+  --background:        222 47% 7%;
+  --foreground:        210 40% 98%;
+  --card:              222 47% 11%;
+  --border:            217 33% 18%;
+  --muted:             217 33% 15%;
+  --muted-foreground:  215 20% 65%;
+  --ring:              221 83% 53%;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100%; height: 100%;
+  font-family: 'Outfit', 'Work Sans', sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Tailwind can't resolve hsl(var()) from config at CDN time — patch directly */
+.bg-background  { background-color: hsl(var(--background)) !important; }
+.bg-foreground  { background-color: hsl(var(--foreground)) !important; }
+.bg-card        { background-color: hsl(var(--card)) !important; }
+.bg-muted       { background-color: hsl(var(--muted)) !important; }
+.bg-border      { background-color: hsl(var(--border)) !important; }
+.text-foreground      { color: hsl(var(--foreground)) !important; }
+.text-muted-foreground{ color: hsl(var(--muted-foreground)) !important; }
+.text-background      { color: hsl(var(--background)) !important; }
+.border-border  { border-color: hsl(var(--border)) !important; }
+.hover\:bg-muted:hover      { background-color: hsl(var(--muted)) !important; }
+.hover\:bg-border:hover     { background-color: hsl(var(--border)) !important; }
+.hover\:bg-foreground:hover { background-color: hsl(var(--foreground)) !important; }
+.hover\:bg-muted-foreground:hover { background-color: hsl(var(--muted-foreground)) !important; }
+.hover\:text-foreground:hover { color: hsl(var(--foreground)) !important; }
+.placeholder\:text-muted-foreground::placeholder { color: hsl(var(--muted-foreground)); }
+.focus\:ring-ring:focus { --tw-ring-color: hsl(var(--ring)); }
+
+/* Smooth theme transition */
+*, body { transition: background-color 0.25s ease, color 0.15s ease, border-color 0.2s ease; }
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="components/ui/hero-with-video.jsx"></script>
+
+<script type="text/babel">
+const { createRoot } = ReactDOM;
+
+const App = () => (
+  <NavbarHero
+    brandName="TechFlow"
+    heroTitle="Innovation Meets Simplicity"
+    heroDescription="Discover cutting-edge solutions designed for the modern digital landscape. Built for teams that move fast."
+    emailPlaceholder="enter@email.com"
+    backgroundImage="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2072&q=80"
+    videoUrl="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+  />
+);
+
+createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
