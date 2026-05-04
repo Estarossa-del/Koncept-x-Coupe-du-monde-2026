@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PORTE RÉVÉLÉE — KONCEPT × CDM 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#D4AF37;--red:#E8192C;--bg:#05080F;--white:#F2F4FF;--muted:#6A7D9C}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow:hidden;height:100vh;cursor:crosshair}
+
+#bg-canvas{position:fixed;inset:0;z-index:0}
+
+.stage{position:fixed;inset:0;z-index:1;display:flex;align-items:center;justify-content:center}
+
+.scene{
+  position:relative;
+  width:min(380px,85vw);height:min(560px,82vh);
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(212,175,55,0.18),0 0 60px rgba(0,0,0,0.9),0 0 120px rgba(212,175,55,0.06);
+}
+
+.panel{position:absolute;inset:0;transition:opacity 60ms}
+.panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* CSS fallbacks quand les images sont absentes */
+.panel-1{background:radial-gradient(ellipse 80% 60% at 50% 100%,#1a1230 0%,#0d0a1a 40%,#060610 100%)}
+.panel-2{background:radial-gradient(ellipse 70% 80% at 50% 30%,#f5c000 0%,#c47000 30%,#7a1500 60%,#1a0500 100%);opacity:0}
+
+/* Dot-matrix canvas sur la scène */
+#dot-canvas{position:absolute;inset:0;z-index:5;border-radius:18px;pointer-events:none}
+
+/* Canvas fallback dessiné en JS */
+#fallback-1,#fallback-2{position:absolute;inset:0}
+
+/* UI */
+.ui{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;pointer-events:none}
+
+.header{padding:20px 28px;display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(180deg,rgba(5,8,15,0.8) 0%,transparent 100%)}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:0.18em}
+.badge{font-size:10px;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;
+  border:1px solid rgba(212,175,55,0.2);padding:4px 12px;border-radius:20px;
+  background:rgba(5,8,15,0.5)}
+
+.footer-ui{margin-top:auto;text-align:center;padding:0 16px 100px;
+  background:linear-gradient(0deg,rgba(5,8,15,0.85) 60%,transparent 100%);
+  padding-top:40px}
+.state-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(26px,5vw,46px);letter-spacing:0.08em;line-height:1.1;
+  background:linear-gradient(135deg,var(--white) 0%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.state-sub{font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:0.15em;text-transform:uppercase}
+
+.hint{
+  position:fixed;bottom:82px;width:100%;text-align:center;
+  font-size:9px;color:rgba(212,175,55,0.38);letter-spacing:0.3em;text-transform:uppercase;
+  z-index:10;pointer-events:none;
+  animation:pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+
+.trigger{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:20;
+  background:var(--red);color:#fff;border:none;border-radius:9px;
+  padding:13px 36px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.12em;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 24px rgba(232,25,44,0.4);
+}
+.trigger:hover{transform:translateX(-50%) translateY(-3px);box-shadow:0 8px 36px rgba(232,25,44,0.6)}
+.trigger:disabled{opacity:0.45;cursor:default;transform:translateX(-50%)}
+
+.back-link{
+  position:fixed;top:22px;right:28px;z-index:20;
+  font-size:11px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;
+  text-decoration:none;pointer-events:auto;
+  border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:6px;
+  background:rgba(5,8,15,0.5);transition:color 0.2s;
+}
+.back-link:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="stage">
+  <div class="scene" id="scene">
+    <div class="panel panel-1" id="panel1">
+      <canvas id="fallback-1"></canvas>
+      <img src="assets/hero/porte_fermee.png" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="panel panel-2" id="panel2">
+      <canvas id="fallback-2"></canvas>
+      <img src="assets/hero/porte_ouverte.png" alt="" onerror="this.style.display='none'">
+    </div>
+    <canvas id="dot-canvas"></canvas>
+  </div>
+</div>
+
+<div class="ui">
+  <div class="header">
+    <div class="brand">KONCEPT</div>
+    <div class="badge">CDM 2026</div>
+  </div>
+  <div class="footer-ui">
+    <div class="state-title" id="stateTitle">AVANT LE<br>COUP D'ENVOI</div>
+    <div class="state-sub" id="stateSub">📅 11 juin 2026 · USA · Mexique · Canada</div>
+  </div>
+</div>
+
+<p class="hint">✦ Cliquez n'importe où pour créer des cristaux ✦</p>
+<button class="trigger" id="triggerBtn">RÉVÉLER LA COUPE ▶</button>
+<a href="index.html" class="back-link">← Accueil</a>
+
+<script>
+// ── PALETTE ───────────────────────────────────────────────────────────────────
+const COLORS=['#D4AF37','#E8192C','#1E90FF','#00C853','#FF6B2B','#F5D060','#9B59B6','#FF8C00'];
+const hexRgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+
+// ── BACKGROUND CANVAS ─────────────────────────────────────────────────────────
+const bgC=document.getElementById('bg-canvas');
+const bgX=bgC.getContext('2d');
+let BW,BH;
+const resize=()=>{BW=bgC.width=innerWidth;BH=bgC.height=innerHeight};
+resize();addEventListener('resize',resize);
+
+const stars=Array.from({length:170},()=>({
+  x:Math.random(),y:Math.random(),
+  r:Math.random()*1.4+0.2,spd:Math.random()*0.008+0.002,
+}));
+const ambs=Array.from({length:35},()=>({
+  x:Math.random()*3,y:Math.random()*3,
+  col:COLORS[Math.floor(Math.random()*COLORS.length)],
+  r:Math.random()*1.6+0.4,
+  vx:(Math.random()-.5)*3e-4,vy:(Math.random()-.5)*3e-4,
+  a:Math.random()*0.35+0.1,
+}));
+
+// ── CRYSTAL SYSTEM (FORGE HERO skill) ─────────────────────────────────────────
+const crystals=[];
+function Crystal(x,y){
+  this.x=x;this.y=y;
+  this.col=COLORS[Math.floor(Math.random()*COLORS.length)];
+  this.rgb=hexRgb(this.col);
+  this.sz=(Math.random()*26+10)|0;
+  this.vx=(Math.random()-.5)*2.6;
+  this.vy=(Math.random()-.5)*2.6-1.2;
+  this.va=(Math.random()-.5)*0.055;
+  this.ang=Math.random()*Math.PI*2;
+  this.life=1;this.dec=Math.random()*.006+.002;
+  this.sides=Math.random()<.5?5:6;
+}
+Crystal.prototype.step=function(){
+  this.x+=this.vx;this.y+=this.vy;
+  this.vy+=.018;
+  this.ang+=this.va;
+  this.life-=this.dec;
+};
+Crystal.prototype.draw=function(ctx){
+  if(this.life<=0)return;
+  const[r,g,b]=this.rgb;
+  ctx.save();
+  ctx.globalAlpha=Math.min(this.life,.92);
+  ctx.translate(this.x,this.y);
+  ctx.rotate(this.ang);
+  ctx.shadowColor=this.col;ctx.shadowBlur=this.sz*1.4;
+  ctx.beginPath();
+  for(let i=0;i<this.sides;i++){
+    const a=(i/this.sides)*Math.PI*2-Math.PI/2;
+    const rad=i%2===0?this.sz:this.sz*.56;
+    i===0?ctx.moveTo(Math.cos(a)*rad,Math.sin(a)*rad):ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad);
+  }
+  ctx.closePath();
+  const gd=ctx.createRadialGradient(0,0,0,0,0,this.sz);
+  gd.addColorStop(0,`rgba(${r},${g},${b},.95)`);
+  gd.addColorStop(.5,`rgba(${r},${g},${b},.55)`);
+  gd.addColorStop(1,`rgba(${r},${g},${b},.04)`);
+  ctx.fillStyle=gd;ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.strokeStyle=`rgba(${r},${g},${b},.75)`;ctx.lineWidth=1;ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-this.sz*.12,-this.sz*.52);ctx.lineTo(this.sz*.08,-this.sz*.15);ctx.lineTo(-this.sz*.04,-this.sz*.1);
+  ctx.closePath();
+  ctx.fillStyle=`rgba(255,255,255,${this.life*.55})`;ctx.shadowBlur=0;ctx.fill();
+  ctx.restore();
+};
+const spawn=(x,y,n=8)=>{for(let i=0;i<n;i++)crystals.push(new Crystal(x+(Math.random()-.5)*50,y+(Math.random()-.5)*50))};
+
+// ── DOT-MATRIX CANVAS (sign-in shader skill — Canvas 2D port) ─────────────────
+const dotC=document.getElementById('dot-canvas');
+const dotX=dotC.getContext('2d');
+const scene=document.getElementById('scene');
+const syncDot=()=>{const r=scene.getBoundingClientRect();dotC.width=r.width;dotC.height=r.height};
+syncDot();addEventListener('resize',syncDot);
+
+const CELL=13,DOT=4.8;
+let dotT=0,dotPhase='idle'; // idle | cover | reveal
+
+function drawDots(){
+  const W=dotC.width,H=dotC.height;
+  dotX.clearRect(0,0,W,H);
+  if(dotPhase==='idle')return;
+  const cols=Math.ceil(W/CELL)+1,rows=Math.ceil(H/CELL)+1;
+  const cx=W/2,cy=H/2,maxD=Math.sqrt(cx*cx+cy*cy);
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=col*CELL+CELL/2,y=row*CELL+CELL/2;
+      const d=Math.sqrt((x-cx)**2+(y-cy)**2)/maxD;
+      let op=0;
+      if(dotT<=1){                       // cover: center → edges
+        const off=d*.65;
+        op=Math.max(0,Math.min(1,(dotT-off)/(1-.65)*2.8));
+      } else {                           // reveal: edges → center
+        const off=(1-d)*.65;
+        op=Math.max(0,Math.min(1,1-(dotT-1-off)/(1-.65)*2.8));
+      }
+      if(op<.01)continue;
+      const special=(row*31+col*17)%18===0;
+      const col2=special?COLORS[1+((row*col)%3)]:COLORS[0];
+      const[r,g,b]=hexRgb(col2);
+      dotX.beginPath();
+      dotX.arc(x,y,DOT*op,0,Math.PI*2);
+      dotX.fillStyle=`rgba(${r},${g},${b},${op*.92})`;
+      dotX.shadowColor=col2;dotX.shadowBlur=DOT*op*3.5;
+      dotX.fill();dotX.shadowBlur=0;
+    }
+  }
+}
+
+// ── FALLBACK CANVAS DRAWINGS ──────────────────────────────────────────────────
+function drawClosedDoor(){
+  const cv=document.getElementById('fallback-1');
+  const r=scene.getBoundingClientRect();
+  cv.width=r.width;cv.height=r.height;
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height;
+
+  // Dark stone bg
+  const bg=c.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#0f0d1e');bg.addColorStop(.5,'#0a0918');bg.addColorStop(1,'#050510');
+  c.fillStyle=bg;c.fillRect(0,0,W,H);
+
+  // Subtle stone cracks
+  c.strokeStyle='rgba(212,175,55,0.06)';c.lineWidth=1;
+  for(let i=0;i<8;i++){
+    c.beginPath();c.moveTo(Math.random()*W,Math.random()*H);
+    c.lineTo(Math.random()*W,Math.random()*H);c.stroke();
+  }
+
+  // Door frame glow
+  c.shadowColor='#D4AF37';c.shadowBlur=24;
+  c.strokeStyle='rgba(212,175,55,0.55)';c.lineWidth=2.5;
+  const dx=W*.18,dy=H*.08,dw=W*.64,dh=H*.82;
+  c.strokeRect(dx,dy,dw,dh);c.shadowBlur=6;
+
+  // Door inset panels (4)
+  const pw=dw*.44,ph1=dh*.36,ph2=dh*.28;
+  const px1=dx+dw*.05,px2=dx+dw*.05+dw*.49;
+  c.strokeStyle='rgba(212,175,55,0.28)';c.lineWidth=1.2;
+  c.strokeRect(px1,dy+dh*.06,pw,ph1);
+  c.strokeRect(px2,dy+dh*.06,pw,ph1);
+  c.strokeRect(px1,dy+dh*.48,pw,ph2);
+  c.strokeRect(px2,dy+dh*.48,pw,ph2);
+
+  // Keyhole
+  c.shadowColor='#D4AF37';c.shadowBlur=30;
+  c.fillStyle='#D4AF37';
+  c.beginPath();c.arc(W/2,H*.5,7,0,Math.PI*2);c.fill();
+  c.beginPath();
+  c.moveTo(W/2-5,H*.5+2);c.lineTo(W/2-5,H*.5+18);
+  c.lineTo(W/2+5,H*.5+18);c.lineTo(W/2+5,H*.5+2);
+  c.fill();c.shadowBlur=0;
+
+  // Stars outside door
+  for(let i=0;i<25;i++){
+    let sx=Math.random()*W,sy=Math.random()*H;
+    if(sx>dx-10&&sx<dx+dw+10&&sy>dy-10&&sy<dy+dh+10)continue;
+    c.beginPath();c.arc(sx,sy,Math.random()*1.2+.2,0,Math.PI*2);
+    c.fillStyle=`rgba(255,255,255,${Math.random()*.6+.2})`;c.fill();
+  }
+
+  // Label
+  c.fillStyle='rgba(212,175,55,0.3)';
+  c.font=`900 ${W*.06}px 'Bebas Neue',sans-serif`;
+  c.textAlign='center';c.letterSpacing='0.2em';
+  c.fillText('AVANT',W/2,H*.95);
+}
+
+function drawOpenDoor(){
+  const cv=document.getElementById('fallback-2');
+  const r=scene.getBoundingClientRect();
+  cv.width=r.width;cv.height=r.height;
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height;
+
+  // Radiant bg
+  const bg=c.createRadialGradient(W/2,H*.3,0,W/2,H*.3,W*.9);
+  bg.addColorStop(0,'#f5c000');bg.addColorStop(.15,'#c47000');
+  bg.addColorStop(.4,'#7a1500');bg.addColorStop(.75,'#1a0500');
+  bg.addColorStop(1,'#05000a');
+  c.fillStyle=bg;c.fillRect(0,0,W,H);
+
+  // Light rays
+  c.save();c.translate(W/2,H*.3);
+  for(let i=0;i<16;i++){
+    const a=(i/16)*Math.PI*2;
+    const len=W*.9;
+    const gd=c.createLinearGradient(0,0,Math.cos(a)*len,Math.sin(a)*len);
+    gd.addColorStop(0,'rgba(245,200,50,0.18)');gd.addColorStop(1,'rgba(245,200,50,0)');
+    c.beginPath();c.moveTo(0,0);
+    c.lineTo(Math.cos(a-0.04)*len,Math.sin(a-0.04)*len);
+    c.lineTo(Math.cos(a+0.04)*len,Math.sin(a+0.04)*len);
+    c.closePath();c.fillStyle=gd;c.fill();
+  }
+  c.restore();
+
+  // Trophy silhouette
+  c.shadowColor='#FFD700';c.shadowBlur=40;c.fillStyle='rgba(212,175,55,0.9)';
+  const tx=W/2,ty=H*.52,ts=W*.28;
+  // Handles
+  c.strokeStyle='rgba(212,175,55,0.9)';c.lineWidth=ts*.06;c.shadowBlur=20;
+  c.beginPath();c.arc(tx-ts*.68,ty-ts*.12,ts*.2,Math.PI*.35,Math.PI*1.05);c.stroke();
+  c.beginPath();c.arc(tx+ts*.68,ty-ts*.12,ts*.2,Math.PI*1.95,Math.PI*2.65);c.stroke();
+  // Bowl
+  c.shadowBlur=30;
+  c.beginPath();
+  c.moveTo(tx-ts*.58,ty-ts*.42);
+  c.quadraticCurveTo(tx-ts*.65,ty+ts*.1,tx-ts*.12,ty+ts*.22);
+  c.lineTo(tx+ts*.12,ty+ts*.22);
+  c.quadraticCurveTo(tx+ts*.65,ty+ts*.1,tx+ts*.58,ty-ts*.42);
+  c.closePath();c.fill();
+  // Stem + base
+  c.fillRect(tx-ts*.08,ty+ts*.22,ts*.16,ts*.28);
+  c.fillRect(tx-ts*.28,ty+ts*.5,ts*.56,ts*.08);
+  c.fillRect(tx-ts*.35,ty+ts*.58,ts*.7,ts*.07);
+  c.shadowBlur=0;
+
+  // Sparkles
+  COLORS.forEach(col=>{
+    const sx=W*.1+Math.random()*W*.8,sy=H*.05+Math.random()*H*.7;
+    const[r,g,b]=hexRgb(col);
+    c.beginPath();c.arc(sx,sy,Math.random()*3,0,Math.PI*2);
+    c.fillStyle=`rgba(${r},${g},${b},${Math.random()*.8+.2})`;
+    c.shadowColor=col;c.shadowBlur=8;c.fill();c.shadowBlur=0;
+  });
+}
+
+// ── STATE MANAGEMENT ──────────────────────────────────────────────────────────
+let state=0;
+const p1=document.getElementById('panel1'),p2=document.getElementById('panel2');
+const titleEl=document.getElementById('stateTitle'),subEl=document.getElementById('stateSub');
+const btn=document.getElementById('triggerBtn');
+
+const STATES=[
+  {title:'AVANT LE<br>COUP D\'ENVOI',sub:'📅 11 juin 2026 · USA · Mexique · Canada',btn:'RÉVÉLER LA COUPE ▶'},
+  {title:'LA COUPE DU<br>MONDE A COMMENCÉ',sub:'⚽ 48 nations · 104 matchs · 16 stades',btn:'RETOUR À L\'ATTENTE ◀'},
+];
+const setUI=s=>{
+  titleEl.innerHTML=STATES[s].title;
+  subEl.textContent=STATES[s].sub;
+  btn.textContent=STATES[s].btn;
+};
+
+let coverT0=0,revealT0=0;
+const DUR=850;
+
+btn.addEventListener('click',e=>{
+  e.stopPropagation();
+  if(dotPhase!=='idle')return;
+  dotPhase='cover';coverT0=performance.now();
+  btn.disabled=true;
+});
+
+document.addEventListener('mousedown',e=>{
+  if(e.target===btn||e.target.classList.contains('back-link'))return;
+  spawn(e.clientX,e.clientY,7);
+});
+
+// ── MAIN LOOP ─────────────────────────────────────────────────────────────────
+let frame=0;
+function loop(now){
+  requestAnimationFrame(loop);
+  frame++;
+
+  // Dot-matrix phase logic
+  if(dotPhase==='cover'){
+    dotT=Math.min(1,(now-coverT0)/DUR);
+    if(dotT>=1){
+      // swap panels
+      if(state===0){p1.style.opacity='0';p2.style.opacity='1';}
+      else{p2.style.opacity='0';p1.style.opacity='1';}
+      state^=1;setUI(state);
+      // crystal burst from scene center
+      const sr=scene.getBoundingClientRect();
+      spawn(sr.left+sr.width/2,sr.top+sr.height/2,28);
+      dotPhase='reveal';revealT0=now;
+    }
+  } else if(dotPhase==='reveal'){
+    dotT=1+Math.min(1,(now-revealT0)/DUR);
+    if(dotT>=2){dotT=2;dotPhase='idle';btn.disabled=false;}
+  }
+
+  // BG: clear
+  bgX.clearRect(0,0,BW,BH);
+
+  // Bg glow
+  const bgGr=bgX.createRadialGradient(BW/2,-BH*.05,0,BW/2,BH/2,BW*.85);
+  bgGr.addColorStop(0,'rgba(212,175,55,0.07)');bgGr.addColorStop(1,'rgba(5,8,15,0)');
+  bgX.fillStyle=bgGr;bgX.fillRect(0,0,BW,BH);
+
+  // Stars
+  stars.forEach(s=>{
+    const a=(Math.sin(frame*s.spd+s.x*9)*.4+.55)*.7;
+    bgX.beginPath();bgX.arc(s.x*BW,s.y*BH,s.r,0,Math.PI*2);
+    bgX.fillStyle=`rgba(255,255,255,${a})`;bgX.fill();
+  });
+
+  // Ambient particles
+  ambs.forEach(p=>{
+    p.x=(p.x+p.vx*BW+3)%3;p.y=(p.y+p.vy*BH+3)%3;
+    const[r,g,b]=hexRgb(p.col);
+    bgX.beginPath();bgX.arc(p.x/3*BW,p.y/3*BH,p.r,0,Math.PI*2);
+    bgX.fillStyle=`rgba(${r},${g},${b},${p.a*.35})`;
+    bgX.shadowColor=p.col;bgX.shadowBlur=9;bgX.fill();bgX.shadowBlur=0;
+  });
+
+  // Crystals (world space)
+  for(let i=crystals.length-1;i>=0;i--){
+    crystals[i].step();crystals[i].draw(bgX);
+    if(crystals[i].life<=0)crystals.splice(i,1);
+  }
+
+  // Dot matrix overlay
+  drawDots();
+}
+
+// Init
+setUI(0);
+drawClosedDoor();
+drawOpenDoor();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
