@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevealText — KONCEPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- React 18 + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #05080F;
+  --fg:     #F2F4FF;
+  --muted:  #6A7D9C;
+  --gold:   #D4AF37;
+  --red:    #E8192C;
+}
+
+html, body, #root {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Inter', sans-serif;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 40px 24px;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,175,55,0.08) 0%, transparent 55%),
+    var(--bg);
+}
+
+.label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Back link */
+.back {
+  position: fixed;
+  top: 20px; left: 24px;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: rgba(5,8,15,0.7);
+  transition: color 0.2s;
+  z-index: 10;
+}
+.back:hover { color: var(--gold); }
+
+/* Demos grid */
+.demos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  width: 100%;
+}
+
+.demo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.demo-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  opacity: 0.6;
+}
+
+/* Responsive font sizes */
+@media (max-width: 640px) {
+  .fs-xl  { font-size: 18vw !important; }
+  .fs-lg  { font-size: 14vw !important; }
+  .fs-md  { font-size: 11vw !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="components/ui/reveal-text.jsx"></script>
+
+<script type="text/babel">
+const { createRoot } = ReactDOM;
+
+const NATURE_IMGS = [
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?auto=format&fit=crop&w=800&q=80",
+];
+
+const FOOTBALL_IMGS = [
+  "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1486286701208-1d58e9338013?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=800&q=80",
+];
+
+const App = () => (
+  <div className="page">
+    <a href="index.html" className="back">← Accueil</a>
+
+    <div style={{textAlign:'center'}}>
+      <p className="label">✦ Reveal Text · Composant interactif ✦</p>
+      <p className="hint">Passe la souris sur les lettres pour révéler l'image</p>
+    </div>
+
+    <div className="demos">
+
+      {/* Demo 1 — STUNNING (original) */}
+      <div className="demo-block">
+        <span className="demo-tag">Demo 1 — Nature</span>
+        <RevealText
+          text="STUNNING"
+          textColor="#ffffff"
+          overlayColor="#ef4444"
+          fontSize="clamp(52px, 10vw, 160px)"
+          fontFamily="'Bebas Neue', sans-serif"
+          letterDelay={0.08}
+          overlayDelay={0.05}
+          overlayDuration={0.4}
+          springDuration={600}
+          letterImages={NATURE_IMGS}
+        />
+      </div>
+
+      {/* Demo 2 — KONCEPT CDM */}
+      <div className="demo-block">
+        <span className="demo-tag">Demo 2 — Football</span>
+        <RevealText
+          text="CDM 2026"
+          textColor="#D4AF37"
+          overlayColor="#E8192C"
+          fontSize="clamp(44px, 9vw, 140px)"
+          fontFamily="'Bebas Neue', sans-serif"
+          letterDelay={0.1}
+          overlayDelay={0.07}
+          overlayDuration={0.5}
+          springDuration={700}
+          letterImages={FOOTBALL_IMGS}
+        />
+      </div>
+
+      {/* Demo 3 — Short word */}
+      <div className="demo-block">
+        <span className="demo-tag">Demo 3 — Minimal</span>
+        <RevealText
+          text="GOAL"
+          textColor="#ffffff"
+          overlayColor="#00C853"
+          fontSize="clamp(72px, 18vw, 220px)"
+          fontFamily="'Bebas Neue', sans-serif"
+          letterDelay={0.12}
+          overlayDelay={0.1}
+          overlayDuration={0.6}
+          springDuration={800}
+          letterImages={FOOTBALL_IMGS}
+        />
+      </div>
+
+    </div>
+
+    <p style={{fontSize:11,color:'var(--muted)',letterSpacing:'0.15em',textTransform:'uppercase',textAlign:'center'}}>
+      Animations CSS · Spring · Image reveal · No framer-motion
+    </p>
+  </div>
+);
+
+createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
