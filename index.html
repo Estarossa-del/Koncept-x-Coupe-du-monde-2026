@@ -957,7 +957,7 @@ const Nav = ({ active, onNav, onSignup, lang, setLang }) => {
             }}>{l.toUpperCase()}</button>
           ))}
         </div>
-        <button className="nav-cta" onClick={onSignup}>{t('signup')}</button>
+        <a href="signin.html" className="nav-cta" style={{textDecoration:'none'}}>{t('signup')}</a>
         <button className="nav-burger" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       </div>
     </nav>
@@ -2828,7 +2828,7 @@ const App = () => {
           <p className="hero-sub">{t('hero_sub')}</p>
           <Countdown/>
           <div style={{display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center'}}>
-            <button className="btn-primary" onClick={()=>setSignupOpen(true)}>{t('signup')}</button>
+            <a href="signin.html" className="btn-primary" style={{textDecoration:'none'}}>{t('signup')}</a>
             <button className="btn-outline" onClick={()=>scrollTo('pronostics')}>
               {lang==='en'?'PREDICTIONS →':lang==='es'?'PRONÓSTICOS →':'PRONOSTICS →'}
             </button>
@@ -2870,7 +2870,7 @@ const App = () => {
         <div className="footer-logo">KONCEPT × CDM 2026</div>
         <p style={{fontSize:13,color:'var(--muted)',marginBottom:6}}>🏆 48 nations · 104 matchs · 16 stades · 3 pays hôtes</p>
         <p style={{fontSize:12,color:'rgba(255,255,255,0.18)',marginBottom:24}}>Source données : FIFA.com · Flashscore.fr · flagcdn.com</p>
-        <button className="btn-primary" onClick={()=>setSignupOpen(true)}>{t('signupFull')}</button>
+        <a href="signin.html" className="btn-primary" style={{textDecoration:'none'}}>{t('signupFull')}</a>
       </footer>
 
       <SignupModal open={signupOpen} onClose={()=>setSignupOpen(false)}/>
