@@ -1,0 +1,68 @@
+/* ═══════════════════════════ SANTAB HERO ═══════════════════════════
+   Import in your project root (e.g. app/layout.tsx or pages/_app.tsx)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* City dot — outer pulse ring */
+@keyframes sh-city-ring-anim {
+  0%   { transform: scale(0.6); opacity: 0.9; }
+  70%  { transform: scale(2.4); opacity: 0;   }
+  100% { transform: scale(2.4); opacity: 0;   }
+}
+.sh-city-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sh-city-ring-anim 2.2s ease-out infinite;
+}
+
+/* Trophy — elastic explosion entrance */
+@keyframes sh-trophy-boom {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.15); filter: blur(12px); }
+  35%  { opacity: 1; transform: translate(-50%, -50%) scale(1.20); filter: blur(0);    }
+  55%  {             transform: translate(-50%, -50%) scale(0.92);                      }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1);                        }
+}
+.sh-trophy-boom {
+  animation: sh-trophy-boom 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Trophy — particle burst (uses CSS custom property --rot) */
+@keyframes sh-particle {
+  0%   { opacity: 1; transform: rotate(var(--rot, 0deg)) translateX(0px)  scale(1.2); }
+  100% { opacity: 0; transform: rotate(var(--rot, 0deg)) translateX(60px) scale(0);   }
+}
+.sh-particle {
+  animation: sh-particle 0.9s ease-out forwards;
+}
+
+/* Rays inner div — continuous rotation */
+@keyframes sh-rays-spin-anim {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.sh-rays-spin {
+  animation: sh-rays-spin-anim 22s linear infinite;
+}
+
+/* SANTAB face — slide-in from right */
+@keyframes sh-face-in {
+  from { opacity: 0; transform: translateX(28px) scale(0.9); }
+  to   { opacity: 1; transform: translateX(0px)  scale(1);   }
+}
+.sh-face-in {
+  animation: sh-face-in 0.8s ease forwards;
+}
+
+/* Network lines — stroke-dashoffset draw */
+@keyframes sh-network-draw {
+  from { stroke-dashoffset: 400; }
+  to   { stroke-dashoffset: 0;   }
+}
+.sh-network-line {
+  animation: sh-network-draw 1.4s ease forwards;
+}
+
+/* CTA title gradient shimmer */
+@keyframes santabCTAShimmer {
+  0%, 100% { background-position: 0%   50%; }
+  50%       { background-position: 100% 50%; }
+}

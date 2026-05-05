@@ -575,6 +575,38 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
   .door-reflection,.door-particles,.door-countdown.j1,.door-skip{animation:none !important;}
   .door-countdown .value.tick{animation:none !important;}
 }
+
+/* ═══════════════ SANTAB HERO ═══════════════ */
+@keyframes sh-city-ring-anim{
+  0%{transform:scale(.6);opacity:.9}70%{transform:scale(2.4);opacity:0}100%{transform:scale(2.4);opacity:0}
+}
+.sh-city-ring{transform-box:fill-box;transform-origin:center;animation:sh-city-ring-anim 2.2s ease-out infinite}
+
+@keyframes sh-trophy-boom{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.15);filter:blur(12px)}
+  35%{opacity:1;transform:translate(-50%,-50%) scale(1.2);filter:blur(0)}
+  55%{transform:translate(-50%,-50%) scale(.92)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+.sh-trophy-boom{animation:sh-trophy-boom .9s cubic-bezier(.34,1.56,.64,1) forwards}
+
+@keyframes sh-particle{
+  0%{opacity:1;transform:rotate(var(--rot,0deg)) translateX(0) scale(1.2)}
+  100%{opacity:0;transform:rotate(var(--rot,0deg)) translateX(60px) scale(0)}
+}
+.sh-particle{animation:sh-particle .9s ease-out forwards}
+
+@keyframes sh-rays-spin-anim{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.sh-rays-spin{animation:sh-rays-spin-anim 22s linear infinite}
+
+@keyframes sh-face-in{from{opacity:0;transform:translateX(28px) scale(.9)}to{opacity:1;transform:translateX(0) scale(1)}}
+.sh-face-in{animation:sh-face-in .8s ease forwards}
+
+@keyframes sh-network-draw{from{stroke-dashoffset:400}to{stroke-dashoffset:0}}
+.sh-network-line{animation:sh-network-draw 1.4s ease forwards}
+
+@keyframes santabCTAShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* ════════════════════════════════════════════ */
 </style>
 
 <script>
@@ -1217,6 +1249,308 @@ const Modal = ({ open, onClose, title, children }) => {
         </div>
         {children}
       </div>
+    </div>
+  );
+};
+
+// ─── SANTAB HERO ─────────────────────────────────────────────────────────────
+const SANTAB_CITIES = [
+  { id:'toronto', name:'Toronto',     x:57, y:37, delay:2000 },
+  { id:'newyork', name:'New York',    x:62, y:44, delay:2700 },
+  { id:'dallas',  name:'Dallas',      x:51, y:56, delay:3400 },
+  { id:'miami',   name:'Miami',       x:60, y:63, delay:4000 },
+  { id:'mexico',  name:'Mexico City', x:46, y:66, delay:4600 },
+];
+
+const SantabHero = ({
+  mapImage    = '/images/Amérique_du_Nord.png',
+  trophyImage = '/images/CDM_1.png',
+  santabImage = '/images/Santab_Main_Event.png',
+  cities      = SANTAB_CITIES,
+  showCTA     = false,
+  showControls= false,
+  duration    = 12000,
+  autoPlay    = true,
+  title       = 'SANTAB IA',
+  subtitle,
+  primaryCTA,
+  secondaryCTA,
+  onPrimaryClick,
+  onSecondaryClick,
+}) => {
+  const canvasRef      = React.useRef(null);
+  const shaderRafRef   = React.useRef(0);
+  const timelineRafRef = React.useRef(0);
+  const startTsRef     = React.useRef(0);
+
+  const [showMap,     setShowMap]     = React.useState(false);
+  const [litCities,   setLitCities]   = React.useState([]);
+  const [showNetwork, setShowNetwork] = React.useState(false);
+  const [showTrophy,  setShowTrophy]  = React.useState(false);
+  const [showRays,    setShowRays]    = React.useState(false);
+  const [showFace,    setShowFace]    = React.useState(false);
+  const [showCTAEl,   setShowCTAEl]   = React.useState(false);
+  const [elapsed,     setElapsed]     = React.useState(0);
+
+  // Cosmic canvas shader
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const stars = Array.from({length:90}, () => ({
+      x:Math.random(), y:Math.random(),
+      vx:(Math.random()-.5)*1.5e-4, vy:(Math.random()-.5)*1.5e-4,
+      r:Math.random()*1.8+.3, ph:Math.random()*Math.PI*2,
+    }));
+    const draw = (t) => {
+      const W=canvas.offsetWidth||800, H=canvas.offsetHeight||600;
+      if(canvas.width!==W) canvas.width=W;
+      if(canvas.height!==H) canvas.height=H;
+      const T=t*.001;
+      ctx.fillStyle='#05080F'; ctx.fillRect(0,0,W,H);
+      const ox=W*(.5+.18*Math.sin(T*.22)), oy=H*(.42+.10*Math.cos(T*.28));
+      const g1=ctx.createRadialGradient(ox,oy,0,W*.5,H*.45,W*.72);
+      g1.addColorStop(0,`rgba(212,175,55,${.13+.04*Math.sin(T*.45)})`);
+      g1.addColorStop(.45,'rgba(180,85,20,.06)'); g1.addColorStop(1,'rgba(5,8,15,0)');
+      ctx.fillStyle=g1; ctx.fillRect(0,0,W,H);
+      const g2=ctx.createRadialGradient(W*(.28+.08*Math.cos(T*.18)),H*(.72+.06*Math.sin(T*.32)),0,W*.3,H*.72,W*.45);
+      g2.addColorStop(0,`rgba(232,25,44,${.055+.015*Math.sin(T*.6)})`);
+      g2.addColorStop(1,'rgba(5,8,15,0)'); ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+      stars.forEach(s=>{
+        s.x=(s.x+s.vx+1)%1; s.y=(s.y+s.vy+1)%1;
+        const a=.35+.35*Math.sin(T*1.8+s.ph);
+        ctx.beginPath(); ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(212,175,55,${a})`; ctx.fill();
+      });
+      shaderRafRef.current=requestAnimationFrame(draw);
+    };
+    shaderRafRef.current=requestAnimationFrame(draw);
+    return ()=>cancelAnimationFrame(shaderRafRef.current);
+  }, []);
+
+  // 12-second timeline
+  const runTimeline = React.useCallback(() => {
+    cancelAnimationFrame(timelineRafRef.current);
+    setShowMap(false); setLitCities([]); setShowNetwork(false);
+    setShowTrophy(false); setShowRays(false); setShowFace(false);
+    setShowCTAEl(false); setElapsed(0);
+    startTsRef.current=performance.now();
+    const tick=(now)=>{
+      const el=now-startTsRef.current;
+      setElapsed(el);
+      if(el>800)  setShowMap(true);
+      setLitCities(cities.filter(c=>el>c.delay).map(c=>c.id));
+      if(el>4500) setShowNetwork(true);
+      if(el>8500) setShowTrophy(true);
+      if(el>9200) setShowRays(true);
+      if(el>9500) setShowFace(true);
+      if(el>10000&&showCTA) setShowCTAEl(true);
+      if(el<duration) timelineRafRef.current=requestAnimationFrame(tick);
+    };
+    timelineRafRef.current=requestAnimationFrame(tick);
+  }, [cities, duration, showCTA]);
+
+  React.useEffect(()=>{
+    if(!autoPlay) return;
+    const id=setTimeout(runTimeline,400);
+    return ()=>{ clearTimeout(id); cancelAnimationFrame(timelineRafRef.current); };
+  }, [autoPlay, runTimeline]);
+
+  const pct=Math.min(100,(elapsed/duration)*100);
+
+  return (
+    <div style={{position:'relative',width:'100%',height:'100vh',overflow:'hidden',background:'#05080F'}}>
+
+      {/* Cosmic shader */}
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>
+
+      {/* Map */}
+      <div style={{
+        position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',
+        pointerEvents:'none',opacity:showMap?1:0,transition:'opacity 1.4s ease',
+      }}>
+        <img src={mapImage} alt="Amérique du Nord" style={{
+          width:'80%',maxWidth:860,height:'auto',
+          filter:'brightness(.5) sepia(.4) hue-rotate(-10deg) saturate(2)',
+          mixBlendMode:'screen',userSelect:'none',
+        }} onError={e=>e.target.style.display='none'}/>
+      </div>
+
+      {/* SVG: beams, dots, network */}
+      <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:4}}>
+        <defs>
+          <filter id="sh-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        {cities.map(city=>{
+          const on=litCities.includes(city.id);
+          return React.createElement(React.Fragment, {key:city.id},
+            React.createElement('line',{
+              x1:'50%',y1:'8%',x2:`${city.x}%`,y2:`${city.y}%`,
+              stroke:'rgba(212,175,55,0.4)',strokeWidth:'1.2',
+              strokeDasharray:'1000',strokeDashoffset:on?0:1000,
+              style:{transition:'stroke-dashoffset .9s ease'},
+            }),
+            React.createElement('circle',{
+              cx:`${city.x}%`,cy:`${city.y}%`,r:'14',
+              fill:'none',stroke:'rgba(212,175,55,0.55)',strokeWidth:'1',
+              className:on?'sh-city-ring':'',
+              style:{opacity:on?1:0,transition:'opacity .4s'},
+            }),
+            React.createElement('circle',{
+              cx:`${city.x}%`,cy:`${city.y}%`,r:'4',
+              fill:on?'#D4AF37':'transparent',
+              filter:on?'url(#sh-glow)':undefined,
+              style:{transition:'fill .4s'},
+            })
+          );
+        })}
+        {showNetwork && cities.map((c1,i)=>cities.slice(i+1).map(c2=>
+          React.createElement('line',{
+            key:`${c1.id}-${c2.id}`,
+            x1:`${c1.x}%`,y1:`${c1.y}%`,x2:`${c2.x}%`,y2:`${c2.y}%`,
+            stroke:'rgba(212,175,55,0.15)',strokeWidth:'.7',
+            strokeDasharray:'400',className:'sh-network-line',
+          })
+        ))}
+      </svg>
+
+      {/* City labels */}
+      {cities.map(city=>{
+        const on=litCities.includes(city.id);
+        return (
+          <div key={`lbl-${city.id}`} style={{
+            position:'absolute',left:`${city.x}%`,top:`calc(${city.y}% + 14px)`,
+            transform:'translateX(-50%)',fontSize:9,fontWeight:700,
+            color:'#D4AF37',letterSpacing:'.14em',textTransform:'uppercase',
+            whiteSpace:'nowrap',fontFamily:'Inter,sans-serif',
+            textShadow:'0 0 10px rgba(212,175,55,.7)',
+            opacity:on?1:0,transition:'opacity .8s',
+            pointerEvents:'none',zIndex:5,
+          }}>{city.name}</div>
+        );
+      })}
+
+      {/* Trophy explosion */}
+      {showTrophy && (
+        <div className="sh-trophy-boom" style={{
+          position:'absolute',left:'50%',top:'44%',
+          zIndex:10,textAlign:'center',pointerEvents:'none',
+        }}>
+          <img src={trophyImage} alt="Trophée CDM 2026" style={{
+            height:'clamp(110px,20vh,220px)',width:'auto',
+            filter:'drop-shadow(0 0 28px rgba(212,175,55,.9)) drop-shadow(0 0 55px rgba(212,175,55,.4))',
+          }} onError={e=>{
+            e.target.outerHTML=`<div style="font-size:clamp(80px,14vh,160px);filter:drop-shadow(0 0 30px rgba(212,175,55,.9))">🏆</div>`;
+          }}/>
+          {Array.from({length:12}).map((_,i)=>(
+            <div key={i} className="sh-particle" style={{
+              position:'absolute',left:'50%',top:'50%',
+              marginLeft:-3,marginTop:-3,width:6,height:6,borderRadius:'50%',
+              background:i%3===0?'#D4AF37':i%3===1?'#F5D060':'#E8192C',
+              '--rot':`${i*30}deg`,animationDelay:`${i*.05}s`,
+            }}/>
+          ))}
+        </div>
+      )}
+
+      {/* Rotating rays */}
+      {showRays && (
+        <div style={{position:'absolute',left:'50%',top:'44%',transform:'translate(-50%,-50%)',zIndex:6,pointerEvents:'none'}}>
+          <div className="sh-rays-spin" style={{width:480,height:480,position:'relative'}}>
+            {Array.from({length:12}).map((_,i)=>(
+              <div key={i} style={{
+                position:'absolute',width:'50%',height:1.5,
+                background:`linear-gradient(90deg,transparent 0%,rgba(212,175,55,${i%4===0?.45:.22}) 100%)`,
+                top:'50%',left:'50%',transformOrigin:'0% 50%',
+                transform:`rotate(${i*30}deg) translateY(-50%)`,
+              }}/>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SANTAB face */}
+      {showFace && (
+        <div className="sh-face-in" style={{position:'absolute',right:'5%',bottom:'8%',zIndex:12,pointerEvents:'none'}}>
+          <img src={santabImage} alt="SANTAB IA" style={{
+            height:'clamp(80px,14vh,150px)',width:'auto',
+            filter:'drop-shadow(0 0 18px rgba(212,175,55,.55))',
+          }} onError={e=>e.target.style.display='none'}/>
+        </div>
+      )}
+
+      {/* CTA overlay */}
+      {showCTA && (
+        <div style={{
+          position:'absolute',inset:0,zIndex:15,
+          display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',
+          paddingBottom:'7vh',
+          background:showCTAEl?'linear-gradient(to top,rgba(5,8,15,.85) 0%,transparent 55%)':'transparent',
+          transition:'background 1.2s',
+        }}>
+          <div style={{
+            textAlign:'center',pointerEvents:showCTAEl?'auto':'none',
+            opacity:showCTAEl?1:0,
+            transform:showCTAEl?'translateY(0)':'translateY(24px)',
+            transition:'opacity .9s ease,transform .9s ease',
+          }}>
+            <h2 style={{
+              fontFamily:'Bebas Neue,sans-serif',
+              fontSize:'clamp(42px,7.5vw,88px)',
+              background:'linear-gradient(135deg,#D4AF37,#F5D060,#D4AF37)',
+              backgroundSize:'200% 200%',
+              WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',
+              animation:'santabCTAShimmer 3s ease infinite',
+              margin:0,lineHeight:.9,letterSpacing:'.06em',
+            }}>{title}</h2>
+            {subtitle && <p style={{
+              fontSize:'clamp(13px,1.8vw,18px)',color:'rgba(242,244,255,.75)',
+              fontFamily:'Inter,sans-serif',marginTop:10,letterSpacing:'.05em',
+            }}>{subtitle}</p>}
+            {(primaryCTA||secondaryCTA) && (
+              <div style={{display:'flex',gap:12,justifyContent:'center',marginTop:22,flexWrap:'wrap'}}>
+                {primaryCTA && (
+                  <button onClick={onPrimaryClick} style={{
+                    background:'linear-gradient(135deg,#D4AF37,#F5D060)',color:'#05080F',border:'none',
+                    padding:'12px 32px',borderRadius:8,fontFamily:'Inter,sans-serif',
+                    fontWeight:700,fontSize:13,letterSpacing:'.1em',textTransform:'uppercase',
+                    cursor:'pointer',boxShadow:'0 6px 24px rgba(212,175,55,.45)',
+                  }}>{primaryCTA}</button>
+                )}
+                {secondaryCTA && (
+                  <button onClick={onSecondaryClick} style={{
+                    background:'rgba(212,175,55,.1)',color:'#D4AF37',
+                    border:'1px solid rgba(212,175,55,.4)',
+                    padding:'12px 26px',borderRadius:8,fontFamily:'Inter,sans-serif',
+                    fontWeight:600,fontSize:13,letterSpacing:'.06em',cursor:'pointer',
+                  }}>{secondaryCTA}</button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Demo controls */}
+      {showControls && (
+        <div style={{position:'absolute',top:16,right:16,zIndex:20,display:'flex',gap:8}}>
+          <button onClick={runTimeline} style={{
+            background:'rgba(212,175,55,.15)',border:'1px solid rgba(212,175,55,.4)',
+            color:'#D4AF37',padding:'7px 14px',borderRadius:6,fontSize:11,
+            fontFamily:'Inter,sans-serif',cursor:'pointer',
+          }}>↺ Replay</button>
+        </div>
+      )}
+
+      {/* Progress bar */}
+      <div style={{
+        position:'absolute',bottom:0,left:0,height:2,width:`${pct}%`,
+        background:'linear-gradient(90deg,#D4AF37,#F5D060)',
+        zIndex:20,transition:'width .1s linear',boxShadow:'0 0 8px rgba(212,175,55,.6)',
+      }}/>
     </div>
   );
 };
@@ -2368,6 +2702,17 @@ const App = () => {
 
       {/* DOOR HERO — Coup d'envoi 11.06.2026 */}
       <DoorHero/>
+
+      {/* SANTAB HERO — Animation cinématique 12s */}
+      <SantabHero
+        showCTA={true}
+        title="SANTAB IA"
+        subtitle="Le pronostiqueur ultime · Coupe du Monde 2026"
+        primaryCTA="Mes Pronostics"
+        secondaryCTA="Défier SANTAB"
+        onPrimaryClick={()=>scrollTo('pronostics')}
+        onSecondaryClick={()=>scrollTo('pronostics')}
+      />
 
       {/* HERO */}
       <section id="hero" data-screen-label="01 Hero" className="hero">
