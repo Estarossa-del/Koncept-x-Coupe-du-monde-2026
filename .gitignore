@@ -1,2 +1,8 @@
 *.pyc
 __pycache__/
+
+# Open Design runtime data
+open-design/.tmp/
+open-design/.od/
+open-design/node_modules/
+open-design/.next/
