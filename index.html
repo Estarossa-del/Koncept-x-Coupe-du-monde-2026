@@ -575,6 +575,93 @@ h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em}
   .door-reflection,.door-particles,.door-countdown.j1,.door-skip{animation:none !important;}
   .door-countdown .value.tick{animation:none !important;}
 }
+
+/* ═══════════════ IMAGE CURSOR TRAIL ═══════════════ */
+.cursor-trail-outer{
+  padding:80px 24px;
+  background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%);
+  position:relative;overflow:hidden;
+}
+.cursor-trail-outer::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(212,175,55,0.04),transparent 70%);
+}
+.cursor-trail-outer .section-label{justify-content:center;margin-bottom:8px}
+.cursor-trail-outer h2{text-align:center;margin-bottom:36px}
+.cursor-trail-wrap{
+  max-width:900px;margin:0 auto;padding:8px;
+  border-radius:28px;border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.01);
+  box-shadow:0 0 80px rgba(0,0,0,0.5);
+}
+.cursor-trail-inner{
+  position:relative;border-radius:22px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.04);
+}
+.cursor-trail-section{
+  position:relative;display:grid;height:520px;width:100%;
+  place-content:center;overflow:hidden;border-radius:22px;
+  cursor:crosshair;user-select:none;
+  background:radial-gradient(ellipse at center,#0d1626 0%,#050810 100%);
+}
+.cursor-trail-cta{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  padding:32px 28px 28px;
+  background:linear-gradient(to top,rgba(5,8,15,0.92) 0%,rgba(5,8,15,0.5) 60%,transparent 100%);
+  display:flex;align-items:flex-end;justify-content:space-between;
+  pointer-events:none;
+}
+.cursor-trail-cta p{
+  font-size:13px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;
+}
+.cursor-trail-cta .trail-tag{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;letter-spacing:0.06em;
+}
+.cursor-trail-hint{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;z-index:5;
+  transition:opacity 0.4s ease;
+}
+.cursor-trail-hint .trail-icon{
+  font-size:48px;display:block;margin-bottom:12px;
+  animation:trailPulse 2.5s ease-in-out infinite;
+}
+.cursor-trail-hint p{
+  font-size:12px;letter-spacing:0.22em;text-transform:uppercase;
+  color:rgba(212,175,55,0.7);font-family:'Bebas Neue',sans-serif;
+  font-size:16px;letter-spacing:0.28em;
+}
+.cursor-trail-section:hover .cursor-trail-hint{opacity:0;}
+@keyframes trailPulse{
+  0%,100%{transform:scale(1);opacity:0.7;}
+  50%{transform:scale(1.12);opacity:1;}
+}
+.cursor-trail-img{
+  position:absolute;
+  transform:translate(-50%,-50%) scale(0);
+  border-radius:20px;object-fit:cover;
+  opacity:0;width:160px;height:192px;
+  transition:transform 0.3s ease,opacity 0.3s ease;
+  pointer-events:none;
+  box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);
+}
+.cursor-trail-img[data-status="active"]{
+  transform:translate(-50%,-50%) scale(1);
+  opacity:1;
+  transition-duration:0.5s;
+  transition-timing-function:cubic-bezier(0.19,1,0.22,1);
+}
+@media(max-width:640px){
+  .cursor-trail-img{width:112px;height:140px;}
+  .cursor-trail-section{height:380px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .cursor-trail-img{transition:none !important;}
+}
 </style>
 
 <script>
@@ -1398,7 +1485,64 @@ const DoorHero = () => {
   );
 };
 
-Object.assign(window,{Nav,SantabAvatar,AtomHero,MascotIdle,Countdown,BallIcon,GradeBadge,WinAnimation,LossAnimation,Section,Modal,useLang,DoorHero});
+// ─── IMAGE CURSOR TRAIL ──────────────────────────────────────────────────────
+const ImageCursorTrail = ({ items, children, className, maxNumberOfImages = 5, imgClass, distance = 20, fadeAnimation = false }) => {
+  const containerRef = React.useRef(null);
+  const refs = React.useRef(items.map(() => React.createRef()));
+  const currentZIndexRef = React.useRef(1);
+  const globalIndexRef = React.useRef(0);
+  const lastRef = React.useRef({ x: 0, y: 0 });
+
+  const activate = React.useCallback((image, x, y) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    image.style.left = `${x - rect.left}px`;
+    image.style.top = `${y - rect.top}px`;
+    if (currentZIndexRef.current > 40) currentZIndexRef.current = 1;
+    image.style.zIndex = String(currentZIndexRef.current++);
+    image.dataset.status = 'active';
+    if (fadeAnimation) setTimeout(() => { image.dataset.status = 'inactive'; }, 1500);
+    lastRef.current = { x, y };
+  }, [fadeAnimation]);
+
+  const deactivate = (image) => { image.dataset.status = 'inactive'; };
+
+  const handleOnMove = React.useCallback((e) => {
+    const dist = Math.hypot(e.clientX - lastRef.current.x, e.clientY - lastRef.current.y);
+    if (dist > window.innerWidth / distance) {
+      const idx = globalIndexRef.current;
+      const lead = refs.current[idx % refs.current.length]?.current;
+      const tail = refs.current[((idx - maxNumberOfImages) % refs.current.length + refs.current.length) % refs.current.length]?.current;
+      if (lead) activate(lead, e.clientX, e.clientY);
+      if (tail) deactivate(tail);
+      globalIndexRef.current++;
+    }
+  }, [distance, maxNumberOfImages, activate]);
+
+  return (
+    <section
+      onMouseMove={handleOnMove}
+      onTouchMove={(e) => handleOnMove(e.touches[0])}
+      ref={containerRef}
+      className={`cursor-trail-section${className ? ' ' + className : ''}`}
+    >
+      {items.map((item, index) => (
+        <img
+          key={index}
+          className={`cursor-trail-img${imgClass ? ' ' + imgClass : ''}`}
+          data-index={index}
+          data-status="inactive"
+          src={item}
+          alt={`trail-${index}`}
+          ref={refs.current[index]}
+        />
+      ))}
+      {children}
+    </section>
+  );
+};
+
+Object.assign(window,{Nav,SantabAvatar,AtomHero,MascotIdle,Countdown,BallIcon,GradeBadge,WinAnimation,LossAnimation,Section,Modal,useLang,DoorHero,ImageCursorTrail});
 
 </script>
 
@@ -2223,6 +2367,53 @@ const { useState, useEffect, useRef, createContext } = React;
 window.LangContext = createContext('fr');
 
 /* ── Stars ── */
+// ─── Atmosphère Cursor Trail Section ────────────────────────────────────────
+const TRAIL_IMAGES = [
+  'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&auto=format&fit=crop',
+];
+
+const AtmosphereTrail = () => {
+  const { t, lang } = useLang();
+  const heading = lang==='en' ? 'THE ATMOSPHERE' : lang==='es' ? 'LA ATMÓSFERA' : "L'ATMOSPHÈRE";
+  const sub = lang==='en' ? 'Move your cursor to reveal the magic'
+             : lang==='es' ? 'Mueve el cursor para revelar la magia'
+             : 'Déplace ton curseur pour révéler la magie';
+  return (
+    <div className="cursor-trail-outer">
+      <p className="section-label">🌍 Mondial 2026</p>
+      <h2 className="section-title" style={{textAlign:'center',marginBottom:8}}>{heading}</h2>
+      <p style={{textAlign:'center',fontSize:13,color:'var(--muted)',marginBottom:36,letterSpacing:'0.05em'}}>{sub}</p>
+      <div className="cursor-trail-wrap">
+        <div className="cursor-trail-inner">
+          <ImageCursorTrail
+            items={TRAIL_IMAGES}
+            maxNumberOfImages={5}
+            distance={18}
+            fadeAnimation={false}
+          >
+            <div className="cursor-trail-hint">
+              <span className="trail-icon">⚽</span>
+              <p>EXPLORE</p>
+            </div>
+            <div className="cursor-trail-cta">
+              <p>{lang==='en'?'48 nations · 104 matches':lang==='es'?'48 naciones · 104 partidos':'48 nations · 104 matchs'}</p>
+              <span className="trail-tag">CDM 2026</span>
+            </div>
+          </ImageCursorTrail>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Stars = () => {
   const stars = useRef([...Array(80)].map((_,i)=>({
     id:i,x:Math.random()*100,y:Math.random()*100,
@@ -2405,6 +2596,11 @@ const App = () => {
         <img src={window.__resources&&window.__resources.fifaLogo||'uploads/2026_FIFA_World_Cup.svg.png'}
           alt="FIFA World Cup 2026" style={{height:80,width:'auto',filter:'brightness(0.9)'}}
           onError={e=>e.target.style.display='none'}/>
+      </div>
+
+      {/* ── IMAGE CURSOR TRAIL — Atmosphère */}
+      <div data-screen-label="02b Atmosphère">
+        <AtmosphereTrail/>
       </div>
 
       <div data-screen-label="03 Pronostics"><PredictionsSection predictions={predictions} setPredictions={setPredictionsWrapped}/></div>
